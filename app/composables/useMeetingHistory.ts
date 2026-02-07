@@ -1,7 +1,7 @@
 import type { Meeting } from '~/types'
 import { useStorage } from '@vueuse/core'
 
-const STORAGE_KEY = 'meetcost-meetings'
+const STORAGE_KEY = 'meetingburn-meetings'
 
 /** ~5–10MB typical limit; 100 meetings ~500KB–1MB estimated */
 const MAX_MEETINGS = 100

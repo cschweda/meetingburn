@@ -1,4 +1,4 @@
-import { meetcostConfig } from './meetcost.config'
+import { meetingburnConfig } from './meetcost.config'
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
@@ -11,9 +11,19 @@ export default defineNuxtConfig({
   modules: ['@nuxt/ui', '@nuxt/devtools', '@nuxtjs/seo'],
 
   site: {
-    url: meetcostConfig.siteUrl,
-    name: meetcostConfig.appName,
-    description: meetcostConfig.defaultDescription,
+    url: meetingburnConfig.siteUrl,
+    name: meetingburnConfig.appName,
+    description: meetingburnConfig.defaultDescription,
+  },
+
+  ogImage: {
+    enabled: true,
+    defaults: {
+      component: 'OgImageStatic',
+      props: {
+        image: '/og-image.png',
+      },
+    },
   },
 
   css: ['~/assets/css/main.css'],
@@ -45,14 +55,14 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'en' },
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: meetcostConfig.appTitle,
+      title: meetingburnConfig.appTitle,
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
       ],
       meta: [
         {
           name: 'description',
-          content: meetcostConfig.defaultDescription,
+          content: meetingburnConfig.defaultDescription,
         },
       ],
     },

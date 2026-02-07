@@ -14,7 +14,7 @@ function sanitizedMeetingDescription(meeting: Meeting): string {
     ? sanitizeString(meeting.meetingDescription, 200)
     : 'Meeting'
 }
-const { sectorLabels } = useMeetcostConfig()
+const { sectorLabels } = useMeetingBurnConfig()
 const toast = useToast()
 const expandedId = ref<string | null>(null)
 const previewByMeetingId = ref<Record<string, { durationSeconds: number; totalCost: number }>>({})

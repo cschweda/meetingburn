@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { appName, receiptFooter } = useMeetcostConfig()
+const { appName, receiptFooter } = useMeetingBurnConfig()
 
 function scrollToTop() {
   if (import.meta.client) window.scrollTo(0, 0)

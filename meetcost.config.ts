@@ -1,22 +1,22 @@
 /**
- * MeetCost - Single source of truth for app configuration
+ * MeetingBurn - Single source of truth for app configuration
  */
 
-export const meetcostConfig = {
-  siteUrl: 'https://meetcost.app',
-  appName: 'MeetCost',
-  appTitle: 'MeetCost - Meeting Cost Calculator',
+export const meetingburnConfig = {
+  siteUrl: 'https://meetingburn.app',
+  appName: 'MeetingBurn',
+  appTitle: 'MeetingBurn - Meeting Cost Calculator',
   tagline: 'See the real cost of every meeting',
   defaultDescription:
     'Free meeting cost calculator. No login required. All computation runs in your browser—your data never leaves your device. Track, analyze, and share the true cost of meetings.',
-  aboutDescription: 'MeetCost is a real-time meeting cost calculator that makes meeting waste visible.',
-  receiptFooter: 'Tracked with MeetCost • meetcost.app',
-  receiptFooterMarkdown: 'Tracked with [MeetCost](https://meetcost.app)',
+  aboutDescription: 'MeetingBurn is a real-time meeting cost calculator that makes meeting waste visible.',
+  receiptFooter: 'Tracked with MeetingBurn • meetingburn.app',
+  receiptFooterMarkdown: 'Tracked with [MeetingBurn](https://meetingburn.app)',
   sectorLabels: {
     public: 'Public sector (taxpayer dollars)',
     private: 'Private sector',
   },
-  sectorDisclaimer: 'MeetCost assumes all public-sector dollars are taxpayer-funded.',
+  sectorDisclaimer: 'MeetingBurn assumes all public-sector dollars are taxpayer-funded.',
   meetingTypes: [
     'General',
     'Stand Up',
@@ -34,4 +34,4 @@ export const meetcostConfig = {
   defaultMeetingType: 'General',
 } as const
 
-export type MeetCostConfig = typeof meetcostConfig
+export type MeetingBurnConfig = typeof meetingburnConfig

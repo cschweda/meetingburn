@@ -3,7 +3,7 @@ import type { ShareReceiptPayload } from '~/composables/useShareReceipt'
 import { formatCurrency, formatDate, formatTime } from '~/utils/formatting'
 import { generateComparisonList } from '~/utils/comparisons'
 import { useShareReceipt } from '~/composables/useShareReceipt'
-import { useMeetcostConfig } from '~/composables/useMeetcostConfig'
+import { useMeetingBurnConfig } from '~/composables/useMeetingBurnConfig'
 
 definePageMeta({
   layout: 'default',
@@ -11,7 +11,7 @@ definePageMeta({
 
 const route = useRoute()
 const { decodeSharePayload } = useShareReceipt()
-const { sectorLabels, receiptFooter } = useMeetcostConfig()
+const { sectorLabels, receiptFooter } = useMeetingBurnConfig()
 
 const payload = ref<ShareReceiptPayload | null>(null)
 const error = ref<string | null>(null)
@@ -63,7 +63,7 @@ const comparisons = computed(() =>
       <div v-if="error" class="text-center py-16">
         <p class="text-xl text-muted mb-4">{{ error }}</p>
         <NuxtLink to="/" class="text-primary hover:underline">
-          Back to MeetCost
+          Back to MeetingBurn
         </NuxtLink>
       </div>
 

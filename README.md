@@ -1,8 +1,10 @@
-# MeetCost
+# MeetingBurn
 
 **See the real cost of every meeting.**
 
-MeetCost is a real-time meeting cost calculator that makes meeting waste visible. Track the true cost of meetings with a live-ticking counter, shareable receipts, and support for both private-sector and taxpayer-funded (public-sector) contexts.
+🔗 **[meetingburn.app](https://meetingburn.app)**
+
+MeetingBurn is a real-time meeting cost calculator that makes meeting waste visible. Track the true cost of meetings with a live-ticking counter, shareable receipts, and support for both private-sector and taxpayer-funded (public-sector) contexts.
 
 ## Screenshots
 
@@ -94,7 +96,7 @@ yarn dev
 ```
 app/
 ├── components/calculator/   # LiveCounter, SetupForm, Receipt, PresetPicker
-├── composables/             # useCalculator, useReceipt, useShareReceipt, usePresets, useMeetcostConfig, useMeetingHistory
+├── composables/             # useCalculator, useReceipt, useShareReceipt, usePresets, useMeetingBurnConfig, useMeetingHistory
 ├── layouts/                 # default, calculator
 ├── pages/                   # index, calculate, about, history, share
 ├── types/                   # Meeting, Participant, SectorType, Preset, etc.
@@ -106,7 +108,7 @@ tests/                       # Vitest unit tests (separate from app)
 └── utils/                   # calculations, formatting, sanitize, comparisons tests
 
 public/                      # Static assets (favicon, screenshots)
-meetcost.config.ts           # Single source of truth for app config
+meetcost.config.ts           # Single source of truth for app config (filename kept for compatibility)
 ```
 
 ## Deployment

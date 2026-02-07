@@ -42,7 +42,7 @@ const {
 
 const { getShareUrl, shareNative } = useShareReceipt()
 
-const { receiptFooter, sectorLabels, sectorDisclaimer } = useMeetcostConfig()
+const { receiptFooter } = useMeetingBurnConfig()
 const toast = useToast()
 const copySuccess = ref<'markdown' | 'plain' | null>(null)
 
@@ -64,7 +64,7 @@ function applyDurationAdjustment() {
     props.meeting.participants,
     newDurationSeconds,
     props.meeting.timestamp,
-    props.meeting.sectorType,
+    undefined,
     props.meeting.meetingDescription
   )
   updated.id = props.meeting.id
@@ -220,13 +220,6 @@ async function copyShareLink() {
         Meeting Receipt
       </h2>
 
-      <div
-        v-if="meeting.sectorType"
-        class="mb-4 px-4 py-2 rounded-full text-sm font-semibold w-fit"
-        :class="meeting.sectorType === 'public' ? 'bg-primary/20 text-primary' : 'bg-muted text-muted'"
-      >
-        {{ sectorLabels[meeting.sectorType] }}
-      </div>
       <p v-if="sanitizedMeetingDescription" class="text-lg font-medium text-highlighted mb-2">
         {{ sanitizedMeetingDescription }}
       </p>
@@ -344,9 +337,6 @@ async function copyShareLink() {
         </p>
       </div>
 
-      <p v-if="meeting.sectorType === 'public'" class="text-sm text-muted mb-2">
-        {{ sectorDisclaimer }}
-      </p>
       <p class="text-xs text-muted mb-6">
         {{ receiptFooter }}
       </p>
@@ -418,7 +408,7 @@ async function copyShareLink() {
               :icon="shareSuccess ? 'i-lucide-check' : 'i-lucide-share-2'"
               @click="handleShare"
             >
-              {{ shareSuccess ? 'Shared!' : 'Share (native)' }}
+              {{ shareSuccess ? 'Shared!' : 'Share via...' }}
             </UButton>
             <UButton
               color="neutral"

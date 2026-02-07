@@ -1,5 +1,5 @@
 import type { Meeting, Participant } from '~/types'
-import { useMeetcostConfig } from '~/composables/useMeetcostConfig'
+import { useMeetingBurnConfig } from '~/composables/useMeetingBurnConfig'
 import { formatCurrency, formatDate, formatDateISO, formatDuration, formatTime, formatTime24 } from '~/utils/formatting'
 import { generateComparisonList } from '~/utils/comparisons'
 import { sanitizeString } from '~/utils/sanitize'
@@ -26,7 +26,7 @@ function getSectorLine(meeting: Meeting, labels: { public: string; private: stri
 }
 
 export function useReceipt() {
-  const meetcostConfig = useMeetcostConfig()
+  const meetingburnConfig = useMeetingBurnConfig()
 
   const getSanitizedMeetingDescription = (meeting: Meeting) =>
     meeting.meetingDescription ? sanitizeString(meeting.meetingDescription, 200) : ''
@@ -41,7 +41,7 @@ export function useReceipt() {
     if (breakdown.contractor > 0) breakdownLines.push(`- ${breakdown.contractor} contractors`)
     if (breakdown.unknown > 0) breakdownLines.push(`- ${breakdown.unknown} unknown/estimated`)
 
-    const sectorLine = getSectorLine(meeting, meetcostConfig.sectorLabels)
+    const sectorLine = getSectorLine(meeting, meetingburnConfig.sectorLabels)
 
     const meetingDesc = getSanitizedMeetingDescription(meeting)
     const meetingTypeLine = meetingDesc ? `**Meeting type:** ${meetingDesc}\n` : ''
@@ -81,7 +81,7 @@ Annual cost: **${formatCurrency(meeting.totalCost * 52)}**
 
 ---
 
-${meeting.sectorType === 'public' ? `*${meetcostConfig.sectorDisclaimer}*\n\n` : ''}*${meetcostConfig.receiptFooterMarkdown}*`
+${meeting.sectorType === 'public' ? `*${meetingburnConfig.sectorDisclaimer}*\n\n` : ''}*${meetingburnConfig.receiptFooterMarkdown}*`
   }
 
   const generatePlainText = (meeting: Meeting): string => {
@@ -94,7 +94,7 @@ ${meeting.sectorType === 'public' ? `*${meetcostConfig.sectorDisclaimer}*\n\n` :
     if (breakdown.contractor > 0) breakdownLines.push(`- ${breakdown.contractor} contractors`)
     if (breakdown.unknown > 0) breakdownLines.push(`- ${breakdown.unknown} unknown/estimated`)
 
-    const sectorLine = meeting.sectorType ? `Sector: ${meetcostConfig.sectorLabels[meeting.sectorType]}\n` : ''
+    const sectorLine = meeting.sectorType ? `Sector: ${meetingburnConfig.sectorLabels[meeting.sectorType]}\n` : ''
     const meetingDesc = getSanitizedMeetingDescription(meeting)
     const meetingTypeLine = meetingDesc ? `Meeting type: ${meetingDesc}\n` : ''
 
@@ -131,7 +131,7 @@ How meeting cost is calculated:
 - Average rate: Sum of each participant's hourly rate ÷ number of participants. Full-time: salary ÷ 2,080 hrs/yr (40 hrs/week × 52 weeks). Contractor: hourly rate.
 - Total cost: (Sum of hourly rates × duration in seconds) ÷ 3,600 sec/hr
 
-${meeting.sectorType === 'public' ? meetcostConfig.sectorDisclaimer + '\n\n' : ''}${meetcostConfig.receiptFooter}`
+${meeting.sectorType === 'public' ? meetingburnConfig.sectorDisclaimer + '\n\n' : ''}${meetingburnConfig.receiptFooter}`
   }
 
   const generateCSV = (meeting: Meeting, includeParticipants = false): string => {
@@ -204,7 +204,7 @@ ${meeting.sectorType === 'public' ? meetcostConfig.sectorDisclaimer + '\n\n' : '
       addLine(`Meeting type: ${meetingDesc}`)
     }
     if (meeting.sectorType) {
-      addLine(`Sector: ${meetcostConfig.sectorLabels[meeting.sectorType]}`)
+      addLine(`Sector: ${meetingburnConfig.sectorLabels[meeting.sectorType]}`)
     }
     addLine(`Date: ${formatDate(meeting.timestamp)} at ${formatTime(meeting.timestamp)}`)
     addLine(`Duration: ${duration.readable} (${duration.totalSeconds >= 60 ? duration.totalMinutes + ' min' : duration.totalSeconds + ' sec'})`)
@@ -226,11 +226,11 @@ ${meeting.sectorType === 'public' ? meetcostConfig.sectorDisclaimer + '\n\n' : '
     y += 6
     if (meeting.sectorType === 'public') {
       doc.setFontSize(8)
-      doc.text(meetcostConfig.sectorDisclaimer, 20, y)
+      doc.text(meetingburnConfig.sectorDisclaimer, 20, y)
       y += 6
     }
     doc.setFontSize(8)
-    doc.text(meetcostConfig.receiptFooter, 20, y)
+    doc.text(meetingburnConfig.receiptFooter, 20, y)
 
     return doc.output('blob')
   }
@@ -249,21 +249,25 @@ ${meeting.sectorType === 'public' ? meetcostConfig.sectorDisclaimer + '\n\n' : '
     const comparisons = generateComparisonList(meeting.totalCost)
     const meetingDesc = getSanitizedMeetingDescription(meeting)
 
-    ctx.fillStyle = '#ffffff'
+    // Dark mode styling
+    ctx.fillStyle = '#0f172a' // dark background
     ctx.fillRect(0, 0, 800, 1000)
 
-    ctx.fillStyle = '#0f172a'
+    // Title
+    ctx.fillStyle = '#f8fafc' // near-white for title
     ctx.font = 'bold 24px system-ui, sans-serif'
     ctx.fillText('Meeting Receipt', 40, 40)
+    
+    // Metadata section
     ctx.font = '14px system-ui, sans-serif'
-    ctx.fillStyle = '#64748b'
+    ctx.fillStyle = '#94a3b8' // slate-400 for muted text
     let y = 70
     if (meetingDesc) {
       ctx.fillText(`Meeting type: ${meetingDesc}`, 40, y)
       y += 24
     }
     if (meeting.sectorType) {
-      ctx.fillText(`Sector: ${meetcostConfig.sectorLabels[meeting.sectorType]}`, 40, y)
+      ctx.fillText(`Sector: ${meetingburnConfig.sectorLabels[meeting.sectorType]}`, 40, y)
       y += 24
     }
     ctx.fillText(`${formatDate(meeting.timestamp)} at ${formatTime(meeting.timestamp)}`, 40, y)
@@ -277,12 +281,16 @@ ${meeting.sectorType === 'public' ? meetcostConfig.sectorDisclaimer + '\n\n' : '
     if (breakdown.unknown > 0) { ctx.fillText(`  - ${breakdown.unknown} unknown/estimated`, 40, y); y += 20 }
     ctx.fillText(`Average Rate: ${formatCurrency(meeting.averageRate)}/hour`, 40, y)
     y += 40
+    
+    // Total cost (bright red accent)
     ctx.font = 'bold 32px system-ui, sans-serif'
-    ctx.fillStyle = '#dc2626'
+    ctx.fillStyle = '#ef4444' // red-500 for emphasis
     ctx.fillText(`TOTAL COST: ${formatCurrency(meeting.totalCost)}`, 40, y)
     y += 50
+    
+    // Comparisons section
     ctx.font = '14px system-ui, sans-serif'
-    ctx.fillStyle = '#64748b'
+    ctx.fillStyle = '#94a3b8' // slate-400 for muted text
     ctx.fillText('This meeting cost the same as:', 40, y)
     y += 24
     comparisons.forEach((c) => { ctx.fillText(`  - ${c}`, 40, y); y += 20 })
@@ -291,8 +299,11 @@ ${meeting.sectorType === 'public' ? meetcostConfig.sectorDisclaimer + '\n\n' : '
     y += 24
     ctx.fillText(`Per-minute: ${formatCurrency(meeting.costPerMinute)}/min | Per-second: ${formatCurrency(meeting.costPerSecond)}/sec`, 40, y)
     y += 40
+    
+    // Footer
     ctx.font = '10px system-ui, sans-serif'
-    ctx.fillText(meetcostConfig.receiptFooter, 40, y)
+    ctx.fillStyle = '#64748b' // slate-500 for footer
+    ctx.fillText(meetingburnConfig.receiptFooter, 40, y)
 
     return new Promise((resolve, reject) => {
       canvas.toBlob(

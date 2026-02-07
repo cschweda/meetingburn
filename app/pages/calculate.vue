@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Meeting, Participant, SectorType } from '~/types'
+import type { Meeting, Participant } from '~/types'
 import { useCalculator } from '~/composables/useCalculator'
 
 definePageMeta({
@@ -12,8 +12,7 @@ type View = 'setup' | 'running' | 'receipt'
 
 const view = ref<View>('setup')
 const participants = ref<Participant[]>([])
-const sectorType = ref<SectorType>('private')
-const { defaultMeetingType } = useMeetcostConfig()
+const { defaultMeetingType } = useMeetingBurnConfig()
 const meetingDescription = ref<string>(defaultMeetingType)
 const startTime = ref(0)
 const isPaused = ref(false)
@@ -21,9 +20,8 @@ const completedMeeting = ref<Meeting | null>(null)
 
 const isRunning = computed(() => view.value === 'running')
 
-function handleStart(newParticipants: Participant[], newSectorType: SectorType, newMeetingDescription: string) {
+function handleStart(newParticipants: Participant[], newMeetingDescription: string) {
   participants.value = newParticipants
-  sectorType.value = newSectorType
   meetingDescription.value = newMeetingDescription
   startTime.value = Date.now()
   view.value = 'running'
@@ -46,7 +44,7 @@ function handleStop() {
     participants.value,
     elapsedSeconds,
     startTime.value,
-    sectorType.value,
+    undefined,
     meetingDescription.value
   )
   completedMeeting.value = meeting
@@ -80,7 +78,6 @@ function handleNewMeeting() {
     <template v-else-if="view === 'running'">
       <CalculatorLiveCounter
         :participants="participants"
-        :sector-type="sectorType"
         :meeting-type="meetingDescription"
         :is-running="isRunning"
         :is-paused="isPaused"

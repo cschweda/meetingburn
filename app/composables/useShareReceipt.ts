@@ -1,5 +1,5 @@
 import type { Meeting } from '~/types'
-import { useMeetcostConfig } from '~/composables/useMeetcostConfig'
+import { useMeetingBurnConfig } from '~/composables/useMeetingBurnConfig'
 
 /** Minimal payload for share URL - keeps URL short */
 export interface ShareReceiptPayload {
@@ -16,7 +16,7 @@ export interface ShareReceiptPayload {
 }
 
 export function useShareReceipt() {
-  const { siteUrl } = useMeetcostConfig()
+  const { siteUrl } = useMeetingBurnConfig()
 
   function meetingToPayload(meeting: Meeting): ShareReceiptPayload {
     const breakdown = {

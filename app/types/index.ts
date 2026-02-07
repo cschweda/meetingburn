@@ -1,6 +1,6 @@
 export type EmploymentType = 'fulltime' | 'contractor' | 'unknown'
 
-export type PresetType = 'tech' | 'consulting' | 'government' | 'agency' | 'corporate' | 'startup' | 'custom'
+export type PresetType = 'tech' | 'consulting' | 'government' | 'agency' | 'corporate' | 'startup' | 'healthcare' | 'nonprofit' | 'custom'
 
 /** Public = taxpayer-funded; private = company/organization dollars */
 export type SectorType = 'public' | 'private'

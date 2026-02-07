@@ -1,8 +1,10 @@
 <script setup lang="ts">
-const { appName, aboutDescription } = useMeetcostConfig()
+const { appName, aboutDescription, siteUrl } = useMeetingBurnConfig()
 useSeoMeta({
   title: `About ${appName}`,
   description: aboutDescription,
+  ogImage: `${siteUrl}/og-image.png`,
+  twitterCard: 'summary_large_image',
 })
 </script>
 
@@ -12,87 +14,31 @@ useSeoMeta({
       About {{ appName }}
     </h1>
     <div class="prose prose-neutral dark:prose-invert max-w-none">
-      <p class="text-muted leading-relaxed mb-4">
+      <!-- General overview -->
+      <p id="privacy" class="text-muted leading-relaxed mb-4">
         {{ appName }} makes invisible meeting waste visible. A live-ticking counter shows dollar-per-second burn rates and creates shareable receipts that drive behavior change in corporate meeting culture.
       </p>
       <p class="text-muted leading-relaxed mb-4">
         <strong>Core value:</strong> Transform abstract meeting time into concrete financial data with shareability.
       </p>
-      <p class="text-muted leading-relaxed mb-4">
-        All data stays in your browser. No tracking, no servers, no accounts. Privacy-first by design.
-      </p>
-      <p class="text-muted leading-relaxed mb-4">
-        <strong>History & storage:</strong> Meeting history is stored in your browser's local storage—local to your device and to your browser. You can clear it at any time. No data leaves your browser. Ever.
-      </p>
 
+      <!-- When remote/async makes sense -->
       <h2 class="text-xl font-semibold text-highlighted mt-10 mb-3">
         When remote beats in-person (and when it doesn't)
       </h2>
       <p class="text-muted leading-relaxed mb-4">
-        Remote meetings (Zoom, Teams, Webex) can be <strong>more effective</strong> than in-person for many use cases: no commute, no room booking, easier to record and replay, and—crucially for coders—less disruption to flow state. In-person all-hands often require everyone to travel, sit in a room, and listen to updates that could have been a Slack message or a 5-minute async video. The cost is the same either way; the question is whether the format justifies it.
+        Remote meetings (Zoom, Teams, Webex) can be <strong>more effective</strong> than in-person for many use cases: no commute, no room booking, easier to record and replay, and—crucially for makers and creatives—less disruption to flow state. In-person all-hands often require everyone to travel, sit in a room, and listen to updates that could have been a Slack message or a 5-minute async video. The cost is the same either way; the question is whether the format justifies it.
       </p>
       <p class="text-muted leading-relaxed mb-4">
-        In-person still wins for team building, complex negotiations, and whiteboard brainstorming. But for status updates, standups, and one-way announcements, remote (or better yet, async Slack/Teams) is often more efficient and less draining. MeetCost helps you see the cost either way—so you can decide whether the meeting format is worth it.
+        In-person still wins for team building, complex negotiations, and whiteboard brainstorming. But for status updates, standups, and one-way announcements, remote (or better yet, async Slack/Teams) is often more efficient and less draining. MeetingBurn helps you see the cost either way—so you can decide whether the meeting format is worth it.
       </p>
 
-      <h2 class="text-xl font-semibold text-highlighted mt-10 mb-3">
-        How sharing works (privacy-first)
-      </h2>
-      <p class="text-muted leading-relaxed mb-4">
-        When you share a receipt, MeetCost creates a shareable link that contains only the <strong>summary data</strong> (total cost, duration, participant count, sector, meeting type)—no names, no salaries, no hourly rates. The link looks like this:
-      </p>
-      <p class="text-sm text-muted leading-relaxed mb-4 font-mono bg-muted/30 p-3 rounded">
-        meetcost.app/share?r=eyJ0IjoxNzM4ODk...
-      </p>
-      
-      <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
-        What is Base64 encoding?
-      </h3>
-      <p class="text-muted leading-relaxed mb-4">
-        Base64 is a simple text format that converts data into a URL-safe string of letters, numbers, and a few symbols. It's <strong>not encryption</strong>—it's just a way to pack data into a link. Think of it like a ZIP file for URLs: it makes the data compact and safe to share in a web address.
-      </p>
-      <p class="text-muted leading-relaxed mb-4">
-        <strong>Here's what happens:</strong>
-      </p>
-      <ul class="text-muted leading-relaxed mb-4 list-disc list-inside space-y-1">
-        <li><strong>Step 1:</strong> Your browser (locally, on your device) takes the meeting summary and converts it to Base64 text.</li>
-        <li><strong>Step 2:</strong> That text becomes part of the share link.</li>
-        <li><strong>Step 3:</strong> When someone clicks your link, <em>their</em> browser decodes the Base64 text and displays the receipt.</li>
-      </ul>
-
-      <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
-        You control who sees the data
-      </h3>
-      <p class="text-muted leading-relaxed mb-4">
-        Base64 is not a secret code. Anyone with the link can decode it (it's just converting text back to numbers). But <strong>only people you send the link to can see the data</strong>. No one else has the link. MeetCost never stores your data on a server—there are no servers. The encoding and decoding both happen in your browser and the recipient's browser. It's entirely in your hands.
-      </p>
-
-      <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
-        What's in the share link?
-      </h3>
-      <p class="text-muted leading-relaxed mb-4">
-        The share URL contains only aggregated, anonymized data:
-      </p>
-      <ul class="text-muted leading-relaxed mb-4 list-disc list-inside space-y-1">
-        <li>Meeting timestamp (date/time)</li>
-        <li>Duration (seconds)</li>
-        <li>Number of participants</li>
-        <li>Total cost and average rate (calculated)</li>
-        <li>Sector (public/private) and meeting type</li>
-        <li>Breakdown (how many full-time/contractor/unknown—no individual details)</li>
-      </ul>
-      <p class="text-muted leading-relaxed mb-4">
-        <strong>What's NOT shared:</strong> Individual participant salaries, hourly rates, names, roles, or any personally identifiable information. The recipient sees only the final cost summary.
-      </p>
-      <p class="text-muted leading-relaxed mb-4">
-        <strong>Bottom line:</strong> Sharing is safe because you choose who gets the link, and the link contains only summary data—never individual compensation details.
-      </p>
-
-      <h2 class="text-xl font-semibold text-highlighted mt-10 mb-3">
+      <!-- Calculation details -->
+      <h2 id="how-it-works" class="text-xl font-semibold text-highlighted mt-10 mb-3">
         How meeting cost is calculated
       </h2>
       <p class="text-muted leading-relaxed mb-4">
-        MeetCost converts each participant's compensation into an hourly rate, sums those rates, and multiplies by meeting duration. All math runs in your browser—no data is sent anywhere.
+        MeetingBurn converts each participant's compensation into an hourly rate, sums those rates, and multiplies by meeting duration. All math runs in your browser—no data is sent anywhere.
       </p>
 
       <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
@@ -139,8 +85,8 @@ useSeoMeta({
               <div class="rounded-lg bg-default/50 p-4 text-sm">
                 <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
                 <ul class="text-muted space-y-1 text-sm list-disc list-inside">
-                  <li>About 1 hour of consultant time at $175/hr</li>
-                  <li>4 enterprise software licenses per month ($75 each)</li>
+                  <li>About 20-25 minutes of consultant time ($175/hr)</li>
+                  <li>1 enterprise software license per month</li>
                   <li>4 project management licenses for a year ($15/mo each)</li>
                 </ul>
                 <p class="text-muted text-sm mt-2 italic">—Could this have been a Slack or Teams message? Async updates often work for status syncs.</p>
@@ -164,14 +110,14 @@ useSeoMeta({
                 <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
                 <p class="text-muted text-sm font-medium mt-2 mb-1">Per meeting:</p>
                 <ul class="text-muted space-y-1 text-sm list-disc list-inside">
-                  <li>2 days of contractor pay ($600/day)</li>
-                  <li>20 enterprise licenses per month</li>
+                  <li>1.5 hours of consultant time ($175/hr)</li>
+                  <li>4 enterprise licenses per month ($75 each)</li>
                 </ul>
                 <p class="text-muted text-sm font-medium mt-2 mb-1">Per year:</p>
                 <ul class="text-muted space-y-1 text-sm list-disc list-inside">
-                  <li>25 training course seats ($750 each)</li>
-                  <li>2 conference registrations ($1,200 each)</li>
-                  <li>200 consultant hours</li>
+                  <li>20 training course seats ($750 each)</li>
+                  <li>1 conference registration ($1,200)</li>
+                  <li>86 hours of consultant time ($175/hr)</li>
                 </ul>
                 <p class="text-muted text-sm mt-2 italic">—Could this have been a Slack or Teams message? Weekly syncs often repeat the same info—a shared doc or async update might suffice.</p>
               </div>
@@ -194,10 +140,10 @@ useSeoMeta({
                 <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
                 <ul class="text-muted space-y-1 text-sm list-disc list-inside">
                   <li>4 hours of consultant time ($175/hr)</li>
-                  <li>1 conference registration ($1,200)</li>
-                  <li>9 enterprise software licenses per month</li>
+                  <li>Half a conference registration ($1,200)</li>
+                  <li>9 enterprise software licenses per month ($75 each)</li>
                 </ul>
-                <p class="text-muted text-sm mt-2 italic">—Could this have been a Slack or Teams message? Large meetings sap concentration from coders; a thread or announcement often reaches everyone without the cost.</p>
+                <p class="text-muted text-sm mt-2 italic">—Could this have been a Slack or Teams message? Large meetings sap concentration from knowledge workers; a thread or announcement often reaches everyone without the cost.</p>
               </div>
             </div>
           </div>
@@ -218,14 +164,14 @@ useSeoMeta({
                 <p class="font-medium text-highlighted mb-2">Business equivalent (taxpayer dollars):</p>
                 <p class="text-muted text-sm font-medium mt-2 mb-1">Per meeting:</p>
                 <ul class="text-muted space-y-1 text-sm list-disc list-inside">
-                  <li>25 training course seats</li>
-                  <li>15 laptop replacements</li>
-                  <li>108 consultant hours</li>
+                  <li>25 training course seats ($750 each)</li>
+                  <li>16 laptop replacements ($1,200 each)</li>
+                  <li>108 hours of consultant time ($175/hr)</li>
                 </ul>
                 <p class="text-muted text-sm font-medium mt-2 mb-1">Per year:</p>
                 <ul class="text-muted space-y-1 text-sm list-disc list-inside">
-                  <li>100 training seats</li>
-                  <li>63 laptops</li>
+                  <li>100 training course seats ($750 each)</li>
+                  <li>63 laptop replacements ($1,200 each)</li>
                   <li>Full-time entry-level public-sector salary</li>
                 </ul>
                 <p class="text-muted text-sm mt-2 italic">—Retreats serve team-building. But routine "all hands" updates could often be a Slack or Teams message instead.</p>
@@ -249,21 +195,85 @@ useSeoMeta({
                 <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
                 <p class="text-muted text-sm font-medium mt-2 mb-1">Per day:</p>
                 <ul class="text-muted space-y-1 text-sm list-disc list-inside">
-                  <li>1 hour of contractor time ($60)</li>
+                  <li>20 minutes of consultant time ($175/hr)</li>
                 </ul>
                 <p class="text-muted text-sm font-medium mt-2 mb-1">Per year:</p>
                 <ul class="text-muted space-y-1 text-sm list-disc list-inside">
-                  <li>26 training course seats</li>
-                  <li>13 laptop replacements</li>
-                  <li>1,040 enterprise software licenses</li>
-                  <li>104 consultant hours</li>
+                  <li>21 training course seats ($750 each)</li>
+                  <li>13 laptop replacements ($1,200 each)</li>
+                  <li>208 enterprise software licenses per month ($75 each)</li>
+                  <li>89 hours of consultant time ($175/hr)</li>
                 </ul>
-                <p class="text-muted text-sm mt-2 italic">—Could this have been a Slack or Teams message? Daily standups often could—async, maybe, but still effective without sapping concentration from coders.</p>
+                <p class="text-muted text-sm mt-2 italic">—Could this have been a Slack or Teams message? Daily standups often could—async updates can be just as effective without disrupting deep work for makers and creatives.</p>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Sharing & Privacy section at the bottom -->
+      <h2 id="sharing" class="text-xl font-semibold text-highlighted mt-16 mb-3">
+        Sharing & Privacy
+      </h2>
+      <p class="text-muted leading-relaxed mb-4">
+        All data stays in your browser. No tracking, no servers, no accounts. Privacy-first by design.
+      </p>
+      <p class="text-muted leading-relaxed mb-4">
+        <strong>History & storage:</strong> Meeting history is stored in your browser's local storage—local to your device and to your browser. You can clear it at any time. No data leaves your browser. Ever.
+      </p>
+
+      <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
+        How sharing works (privacy-first)
+      </h3>
+      <p class="text-muted leading-relaxed mb-4">
+        When you share a receipt, MeetingBurn creates a shareable link that contains only the <strong>summary data</strong> (total cost, duration, participant count, sector, meeting type)—no names, no salaries, no hourly rates. The link looks like this:
+      </p>
+      <p class="text-sm text-muted leading-relaxed mb-4 font-mono bg-muted/30 p-3 rounded">
+        meetingburn.app/share?r=eyJ0IjoxNzM4ODk...
+      </p>
+      
+      <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
+        What is Base64 encoding?
+      </h3>
+      <p class="text-muted leading-relaxed mb-4">
+        Base64 is a simple text format that converts data into a URL-safe string of letters, numbers, and a few symbols. It's <strong>not encryption</strong>—it's just a way to pack data into a link. Think of it like a ZIP file for URLs: it makes the data compact and safe to share in a web address.
+      </p>
+      <p class="text-muted leading-relaxed mb-4">
+        <strong>Here's what happens:</strong>
+      </p>
+      <ul class="text-muted leading-relaxed mb-4 list-disc list-inside space-y-1">
+        <li><strong>Step 1:</strong> Your browser (locally, on your device) takes the meeting summary and converts it to Base64 text.</li>
+        <li><strong>Step 2:</strong> That text becomes part of the share link.</li>
+        <li><strong>Step 3:</strong> When someone clicks your link, <em>their</em> browser decodes the Base64 text and displays the receipt.</li>
+      </ul>
+
+      <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
+        You control who sees the data
+      </h3>
+      <p class="text-muted leading-relaxed mb-4">
+        Base64 is not a secret code. Anyone with the link can decode it (it's just converting text back to numbers). But <strong>only people you send the link to can see the data</strong>. No one else has the link. MeetingBurn never stores your data on a server—there are no servers. The encoding and decoding both happen in your browser and the recipient's browser. It's entirely in your hands.
+      </p>
+
+      <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
+        What's in the share link?
+      </h3>
+      <p class="text-muted leading-relaxed mb-4">
+        The share URL contains only aggregated, anonymized data:
+      </p>
+      <ul class="text-muted leading-relaxed mb-4 list-disc list-inside space-y-1">
+        <li>Meeting timestamp (date/time)</li>
+        <li>Duration (seconds)</li>
+        <li>Number of participants</li>
+        <li>Total cost and average rate (calculated)</li>
+        <li>Sector (public/private) and meeting type</li>
+        <li>Breakdown (how many full-time/contractor/unknown—no individual details)</li>
+      </ul>
+      <p class="text-muted leading-relaxed mb-4">
+        <strong>What's NOT shared:</strong> Individual participant salaries, hourly rates, names, roles, or any personally identifiable information. The recipient sees only the final cost summary.
+      </p>
+      <p class="text-muted leading-relaxed mb-4">
+        <strong>Bottom line:</strong> Sharing is safe because you choose who gets the link, and the link contains only summary data—never individual compensation details.
+      </p>
 
       <p class="text-muted leading-relaxed mt-8">
         <NuxtLink to="/" class="text-primary hover:underline font-medium">

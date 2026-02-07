@@ -1,8 +1,10 @@
 <script setup lang="ts">
-const { tagline, defaultDescription, appName } = useMeetcostConfig()
+const { tagline, defaultDescription, appName, siteUrl } = useMeetingBurnConfig()
 useSeoMeta({
   title: `${appName} - ${tagline}`,
   description: defaultDescription,
+  ogImage: `${siteUrl}/og-image.png`,
+  twitterCard: 'summary_large_image',
 })
 </script>
 
@@ -71,33 +73,42 @@ useSeoMeta({
 
     <div class="mt-24 grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
       <!-- Privacy-first first - critical differentiator -->
-      <div class="text-center p-6 rounded-lg border-2 border-primary/20 md:order-1">
-        <div class="inline-flex p-3 rounded-full bg-primary/15 text-primary mb-4">
+      <NuxtLink
+        to="/about#privacy"
+        class="text-center p-6 rounded-lg border-2 border-primary/20 md:order-1 transition-all hover:shadow-lg hover:scale-105 hover:border-primary/40 cursor-pointer group"
+      >
+        <div class="inline-flex p-3 rounded-full bg-primary/15 text-primary mb-4 group-hover:bg-primary/25 transition-colors">
           <UIcon name="i-lucide-shield-check" class="size-8" aria-hidden="true" />
         </div>
-        <h3 class="text-lg font-semibold mb-2">Privacy-first</h3>
+        <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">Privacy-first</h3>
         <p class="text-muted text-sm">
           Nothing leaves your browser. All data stored locally. No tracking, no servers.
         </p>
-      </div>
-      <div class="text-center p-6 rounded-lg border border-default md:order-2">
-        <div class="inline-flex p-3 rounded-full bg-primary/10 text-primary mb-4">
+      </NuxtLink>
+      <NuxtLink
+        to="/about#how-it-works"
+        class="text-center p-6 rounded-lg border border-default md:order-2 transition-all hover:shadow-lg hover:scale-105 hover:border-primary/30 cursor-pointer group"
+      >
+        <div class="inline-flex p-3 rounded-full bg-primary/10 text-primary mb-4 group-hover:bg-primary/20 transition-colors">
           <UIcon name="i-lucide-clock" class="size-8" aria-hidden="true" />
         </div>
-        <h3 class="text-lg font-semibold mb-2">Live counter</h3>
+        <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">Live counter</h3>
         <p class="text-muted text-sm">
           See costs tick up every second. No more guessing—just the numbers.
         </p>
-      </div>
-      <div class="text-center p-6 rounded-lg border border-default md:order-3">
-        <div class="inline-flex p-3 rounded-full bg-primary/10 text-primary mb-4">
+      </NuxtLink>
+      <NuxtLink
+        to="/about#sharing"
+        class="text-center p-6 rounded-lg border border-default md:order-3 transition-all hover:shadow-lg hover:scale-105 hover:border-primary/30 cursor-pointer group"
+      >
+        <div class="inline-flex p-3 rounded-full bg-primary/10 text-primary mb-4 group-hover:bg-primary/20 transition-colors">
           <UIcon name="i-lucide-share-2" class="size-8" aria-hidden="true" />
         </div>
-        <h3 class="text-lg font-semibold mb-2">Shareable receipts</h3>
+        <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">Shareable receipts</h3>
         <p class="text-muted text-sm">
           Copy as Markdown or plain text. Share the shock with your team.
         </p>
-      </div>
+      </NuxtLink>
     </div>
   </div>
 </template>

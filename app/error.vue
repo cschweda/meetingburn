@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const error = useError()
 const route = useRoute()
-const { appName } = useMeetcostConfig()
+const { appName } = useMeetingBurnConfig()
 
 const statusCode = computed(() => error.value?.statusCode ?? 500)
 const message = computed(() => {

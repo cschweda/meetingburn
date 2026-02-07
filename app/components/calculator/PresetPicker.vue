@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import type { PresetParticipantConfig } from '~/composables/usePresets'
-import type { PresetType, SectorType } from '~/types'
+import type { PresetType } from '~/types'
 import { usePresets } from '~/composables/usePresets'
 import { formatCurrency } from '~/utils/formatting'
-
-const props = defineProps<{
-  sectorType: SectorType
-}>()
 
 const emit = defineEmits<{
   select: [configs: PresetParticipantConfig[], presetType: PresetType]
@@ -16,31 +12,31 @@ const { PRESETS, createParticipantsFromPreset } = usePresets()
 const numberOfPeople = ref(3)
 const presetOrder: (Exclude<PresetType, 'custom'>)[] = [
   'tech',
-  'government',
   'consulting',
-  'agency',
+  'government',
   'corporate',
+  'agency',
   'startup',
+  'healthcare',
+  'nonprofit',
 ]
 
 const presetItems = computed(() =>
   presetOrder.map((key) => ({ key, preset: PRESETS[key] }))
 )
 
-const presetColorMap: Record<string, 'primary' | 'secondary' | 'success' | 'warning' | 'neutral'> = {
+const presetColorMap: Record<string, 'primary' | 'secondary' | 'success' | 'warning' | 'neutral' | 'error'> = {
   blue: 'primary',
   purple: 'secondary',
   green: 'success',
   slate: 'neutral',
   gray: 'neutral',
   pink: 'warning',
+  red: 'error',
+  orange: 'warning',
 }
 
-const selectedPreset = ref<Exclude<PresetType, 'custom'> | null>(null)
-
-function getPresetForSector(sector: SectorType): Exclude<PresetType, 'custom'> {
-  return sector === 'public' ? 'government' : 'tech'
-}
+const selectedPreset = ref<Exclude<PresetType, 'custom'> | null>('tech')
 
 function applyPreset(presetType: Exclude<PresetType, 'custom'>) {
   selectedPreset.value = presetType
@@ -50,29 +46,22 @@ function applyPreset(presetType: Exclude<PresetType, 'custom'>) {
   emit('select', configs, presetType)
 }
 
-function applyPresetFromSector(sector: SectorType) {
-  const presetType = getPresetForSector(sector)
-  selectedPreset.value = presetType
-  const preset = PRESETS[presetType]
-  const count = Math.max(2, Math.min(50, numberOfPeople.value))
-  const configs = createParticipantsFromPreset(preset, count)
-  emit('select', configs, presetType)
-}
-
-watch(
-  () => props.sectorType,
-  (sector) => {
-    applyPresetFromSector(sector)
-  },
-  { immediate: true }
-)
+// Apply default preset on mount
+onMounted(() => {
+  applyPreset('tech')
+})
 </script>
 
 <template>
   <div class="space-y-4">
-    <h3 class="text-lg font-medium text-muted">
-      Quick setup with industry preset
-    </h3>
+    <div>
+      <h3 class="text-lg font-medium text-muted mb-1">
+        Quick setup with industry preset
+      </h3>
+      <p class="text-sm text-muted">
+        Based on 2026 US salary trends. You can customize each participant after selecting a preset.
+      </p>
+    </div>
     <UFormField label="Number of people" size="lg">
       <UInputNumber
         v-model="numberOfPeople"
