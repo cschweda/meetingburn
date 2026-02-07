@@ -41,7 +41,7 @@ useSeoMeta({
             color="primary"
             class="min-h-[56px] w-full sm:w-auto px-8 text-lg font-semibold"
             icon="i-lucide-flame"
-            aria-label="Start tracking meeting costs"
+            aria-label="Start Tracking Now"
           >
             Start Tracking Now
           </UButton>
@@ -52,9 +52,9 @@ useSeoMeta({
             color="neutral"
             variant="outline"
             class="min-h-[56px] w-full sm:w-auto px-8 text-lg"
-            :aria-label="`Learn more about ${appName}`"
+            :aria-label="`About ${appName}`"
           >
-            Learn More
+            About {{ appName }}
           </UButton>
         </NuxtLink>
       </div>

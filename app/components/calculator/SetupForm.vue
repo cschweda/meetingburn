@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { EmploymentType, Participant, SectorType } from '~/types'
+import type { PresetParticipantConfig } from '~/composables/usePresets'
 
 const emit = defineEmits<{
   start: [participants: Participant[], sectorType: SectorType, meetingDescription: string]
 }>()
 
 const { meetingTypes, defaultMeetingType } = useMeetcostConfig()
-const numberOfPeople = ref(2)
+const numberOfPeople = ref(3)
 const sectorType = ref<SectorType>('public')
 const meetingDescription = ref(defaultMeetingType)
 
@@ -32,12 +33,22 @@ function buildParticipantConfigs() {
       next.push({
         id: `p-${Date.now()}-${i}`,
         employmentType: 'fulltime',
-        annualSalary: 90000,
+        annualSalary: 75000,
         hourlyRate: 60,
       })
     }
   }
   participantConfigs.value = next
+}
+
+function applyPresetConfigs(configs: PresetParticipantConfig[]) {
+  numberOfPeople.value = configs.length
+  participantConfigs.value = configs.map((p) => ({
+    id: p.id,
+    employmentType: p.employmentType,
+    annualSalary: p.annualSalary,
+    hourlyRate: p.hourlyRate,
+  }))
 }
 
 watch(numberOfPeople, (val) => {
@@ -78,7 +89,7 @@ function buildParticipants(): Participant[] {
       id: p.id,
       employmentType: p.employmentType,
       annualSalary: p.employmentType === 'fulltime' ? annualSalary : undefined,
-      hourlyRate: p.employmentType === 'contractor' ? hourlyRate : undefined,
+      hourlyRate: p.employmentType === 'contractor' || p.employmentType === 'unknown' ? hourlyRate : undefined,
       effectiveHourlyRate: effectiveRate,
       isActive: true,
     }
@@ -93,7 +104,7 @@ function handleStart() {
 function getCalculatedRate(p: ParticipantConfig) {
   return p.employmentType === 'fulltime'
     ? (p.annualSalary / 2080).toFixed(2)
-    : p.hourlyRate.toFixed(2)
+    : (p.hourlyRate ?? 0).toFixed(2)
 }
 </script>
 
@@ -141,6 +152,13 @@ function getCalculatedRate(p: ParticipantConfig) {
       </template>
     </UFormField>
 
+    <div class="border-b border-default pb-6">
+      <CalculatorPresetPicker
+        :sector-type="sectorType"
+        @select="applyPresetConfigs"
+      />
+    </div>
+
     <UFormField label="Number of people" required size="xl">
       <UInputNumber
         v-model="numberOfPeople"
@@ -151,6 +169,8 @@ function getCalculatedRate(p: ParticipantConfig) {
         class="w-full"
         :ui="{ base: 'min-h-[56px] text-xl' }"
         aria-label="Number of meeting participants"
+        :increment="{ color: 'neutral', variant: 'solid', size: 'sm' }"
+        :decrement="{ color: 'neutral', variant: 'solid', size: 'sm' }"
         @update:model-value="buildParticipantConfigs"
       />
     </UFormField>
@@ -188,6 +208,15 @@ function getCalculatedRate(p: ParticipantConfig) {
               >
                 Contractor (hourly)
               </UButton>
+              <UButton
+                :color="p.employmentType === 'unknown' ? 'primary' : 'neutral'"
+                :variant="p.employmentType === 'unknown' ? 'solid' : 'outline'"
+                size="lg"
+                class="min-h-[48px]"
+                @click="p.employmentType = 'unknown'"
+              >
+                Unknown / estimate
+              </UButton>
             </div>
           </UFormField>
           <UFormField
@@ -211,7 +240,7 @@ function getCalculatedRate(p: ParticipantConfig) {
             </template>
           </UFormField>
           <UFormField
-            v-else
+            v-else-if="p.employmentType === 'contractor' || p.employmentType === 'unknown'"
             label="Hourly rate"
             required
             size="lg"

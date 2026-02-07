@@ -32,7 +32,11 @@ const emit = defineEmits<{
   stop: []
   pause: []
   resume: []
+  milestone: [amount: number]
 }>()
+
+const MILESTONES = [500, 1000, 5000, 10000]
+const reachedMilestones = ref<Set<number>>(new Set())
 
 const costPerSecond = computed(() => getCostPerSecond(props.participants))
 
@@ -93,8 +97,19 @@ watch(
   () => {
     elapsedSeconds.value = 0
     pausedAtSeconds.value = null
+    reachedMilestones.value = new Set()
   }
 )
+
+watch(currentCost, (cost) => {
+  if (!props.isRunning || props.isPaused) return
+  for (const m of MILESTONES) {
+    if (cost >= m && !reachedMilestones.value.has(m)) {
+      reachedMilestones.value = new Set([...reachedMilestones.value, m])
+      emit('milestone', m)
+    }
+  }
+})
 
 function onPause() {
   emit('pause')

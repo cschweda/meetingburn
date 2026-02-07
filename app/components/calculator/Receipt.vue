@@ -5,6 +5,7 @@ import { generateComparisonList } from '~/utils/comparisons'
 import { useReceipt } from '~/composables/useReceipt'
 import { useCalculator } from '~/composables/useCalculator'
 import { useMeetingHistory } from '~/composables/useMeetingHistory'
+import { useShareReceipt } from '~/composables/useShareReceipt'
 import { sanitizeString } from '~/utils/sanitize'
 
 const props = defineProps<{
@@ -33,10 +34,13 @@ const {
   generatePlainText,
   generateCSV,
   generatePDF,
+  generatePNG,
   downloadFile,
   copyToClipboard,
   getParticipantBreakdown,
 } = useReceipt()
+
+const { getShareUrl, shareNative } = useShareReceipt()
 
 const { receiptFooter, sectorLabels, sectorDisclaimer } = useMeetcostConfig()
 const toast = useToast()
@@ -165,6 +169,46 @@ async function downloadPDF() {
   const blob = await generatePDF(props.meeting)
   downloadFile(blob, `meeting-receipt-${timestamp.value}.pdf`, 'application/pdf')
   toast.add({ title: 'Downloaded PDF', color: 'success' })
+}
+
+async function downloadPNG() {
+  const blob = await generatePNG(props.meeting)
+  downloadFile(blob, `meeting-receipt-${timestamp.value}.png`, 'image/png')
+  toast.add({ title: 'Downloaded PNG', color: 'success' })
+}
+
+const shareSuccess = ref(false)
+
+async function handleShare() {
+  try {
+    const text = generatePlainText(props.meeting)
+    let pngBlob: Blob | undefined
+    try {
+      pngBlob = await generatePNG(props.meeting)
+    } catch {
+      // Skip PNG if canvas fails
+    }
+    const success = await shareNative(props.meeting, text, pngBlob)
+    if (success) {
+      shareSuccess.value = true
+      toast.add({ title: 'Shared successfully', color: 'success', icon: 'i-lucide-share-2' })
+      setTimeout(() => { shareSuccess.value = false }, 2000)
+    }
+  } catch (e) {
+    if ((e as Error).name !== 'AbortError') {
+      await copyShareLink()
+    }
+  }
+}
+
+async function copyShareLink() {
+  const url = getShareUrl(props.meeting)
+  const success = await copyToClipboard(url)
+  if (success) {
+    toast.add({ title: 'Share link copied to clipboard', color: 'success', icon: 'i-lucide-link' })
+  } else {
+    toast.add({ title: 'Failed to copy link', color: 'error' })
+  }
 }
 </script>
 
@@ -350,6 +394,41 @@ async function downloadPDF() {
               @click="downloadPDF"
             >
               PDF
+            </UButton>
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="lg"
+              class="min-h-[48px]"
+              icon="i-lucide-image"
+              @click="downloadPNG"
+            >
+              PNG
+            </UButton>
+          </div>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-muted mb-3">Share</p>
+          <div class="flex flex-wrap gap-3">
+            <UButton
+              :color="shareSuccess ? 'success' : 'primary'"
+              :variant="shareSuccess ? 'soft' : 'solid'"
+              size="lg"
+              class="min-h-[48px]"
+              :icon="shareSuccess ? 'i-lucide-check' : 'i-lucide-share-2'"
+              @click="handleShare"
+            >
+              {{ shareSuccess ? 'Shared!' : 'Share (native)' }}
+            </UButton>
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="lg"
+              class="min-h-[48px]"
+              icon="i-lucide-link"
+              @click="copyShareLink"
+            >
+              Copy share link
             </UButton>
           </div>
         </div>

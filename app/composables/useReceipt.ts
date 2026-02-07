@@ -235,6 +235,74 @@ ${meeting.sectorType === 'public' ? meetcostConfig.sectorDisclaimer + '\n\n' : '
     return doc.output('blob')
   }
 
+  const generatePNG = async (meeting: Meeting): Promise<Blob> => {
+    const canvas = document.createElement('canvas')
+    const scale = 2
+    canvas.width = 800 * scale
+    canvas.height = 1000 * scale
+    const ctx = canvas.getContext('2d')
+    if (!ctx) throw new Error('Canvas not supported')
+    ctx.scale(scale, scale)
+
+    const duration = formatDuration(meeting.duration)
+    const breakdown = getParticipantBreakdown(meeting.participants)
+    const comparisons = generateComparisonList(meeting.totalCost)
+    const meetingDesc = getSanitizedMeetingDescription(meeting)
+
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, 800, 1000)
+
+    ctx.fillStyle = '#0f172a'
+    ctx.font = 'bold 24px system-ui, sans-serif'
+    ctx.fillText('Meeting Receipt', 40, 40)
+    ctx.font = '14px system-ui, sans-serif'
+    ctx.fillStyle = '#64748b'
+    let y = 70
+    if (meetingDesc) {
+      ctx.fillText(`Meeting type: ${meetingDesc}`, 40, y)
+      y += 24
+    }
+    if (meeting.sectorType) {
+      ctx.fillText(`Sector: ${meetcostConfig.sectorLabels[meeting.sectorType]}`, 40, y)
+      y += 24
+    }
+    ctx.fillText(`${formatDate(meeting.timestamp)} at ${formatTime(meeting.timestamp)}`, 40, y)
+    y += 24
+    ctx.fillText(`Duration: ${duration.readable} (${duration.totalSeconds >= 60 ? duration.totalMinutes + ' min' : duration.totalSeconds + ' sec'})`, 40, y)
+    y += 24
+    ctx.fillText(`Attendees: ${meeting.participants.length} people`, 40, y)
+    y += 24
+    if (breakdown.fulltime > 0) { ctx.fillText(`  - ${breakdown.fulltime} full-time employees`, 40, y); y += 20 }
+    if (breakdown.contractor > 0) { ctx.fillText(`  - ${breakdown.contractor} contractors`, 40, y); y += 20 }
+    if (breakdown.unknown > 0) { ctx.fillText(`  - ${breakdown.unknown} unknown/estimated`, 40, y); y += 20 }
+    ctx.fillText(`Average Rate: ${formatCurrency(meeting.averageRate)}/hour`, 40, y)
+    y += 40
+    ctx.font = 'bold 32px system-ui, sans-serif'
+    ctx.fillStyle = '#dc2626'
+    ctx.fillText(`TOTAL COST: ${formatCurrency(meeting.totalCost)}`, 40, y)
+    y += 50
+    ctx.font = '14px system-ui, sans-serif'
+    ctx.fillStyle = '#64748b'
+    ctx.fillText('This meeting cost the same as:', 40, y)
+    y += 24
+    comparisons.forEach((c) => { ctx.fillText(`  - ${c}`, 40, y); y += 20 })
+    y += 10
+    ctx.fillText(`If repeated weekly: Annual cost ${formatCurrency(meeting.totalCost * 52)}`, 40, y)
+    y += 24
+    ctx.fillText(`Per-minute: ${formatCurrency(meeting.costPerMinute)}/min | Per-second: ${formatCurrency(meeting.costPerSecond)}/sec`, 40, y)
+    y += 40
+    ctx.font = '10px system-ui, sans-serif'
+    ctx.fillText(meetcostConfig.receiptFooter, 40, y)
+
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => (blob ? resolve(blob) : reject(new Error('PNG generation failed'))),
+        'image/png',
+        0.9
+      )
+    })
+  }
+
   const downloadFile = (content: string | Blob, filename: string, mimeType?: string) => {
     const blob = content instanceof Blob
       ? content
@@ -272,6 +340,7 @@ ${meeting.sectorType === 'public' ? meetcostConfig.sectorDisclaimer + '\n\n' : '
     generatePlainText,
     generateCSV,
     generatePDF,
+    generatePNG,
     downloadFile,
     copyToClipboard,
     getParticipantBreakdown,

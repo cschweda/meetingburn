@@ -3,7 +3,7 @@ import type { Meeting, Participant, SectorType } from '~/types'
 import { useCalculator } from '~/composables/useCalculator'
 
 definePageMeta({
-  layout: 'calculator',
+  layout: 'default',
 })
 
 const { buildMeeting } = useCalculator()
@@ -88,6 +88,7 @@ function handleNewMeeting() {
         @stop="handleStop"
         @pause="handlePause"
         @resume="handleResume"
+        @milestone="(m) => toast.add({ title: `$${m.toLocaleString()} milestone reached!`, color: 'warning', icon: 'i-lucide-bell' })"
       />
     </template>
 

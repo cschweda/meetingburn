@@ -8,11 +8,18 @@ export default defineNuxtConfig({
 
   srcDir: 'app',
 
-  modules: ['@nuxt/ui', '@nuxt/devtools'],
+  modules: ['@nuxt/ui', '@nuxt/devtools', '@nuxtjs/seo'],
+
+  // @ts-expect-error - site config from nuxt-site-config (via @nuxtjs/seo)
+  site: {
+    url: meetcostConfig.siteUrl,
+    name: meetcostConfig.appName,
+    description: meetcostConfig.defaultDescription,
+  },
 
   css: ['~/assets/css/main.css'],
 
-  devtools: { enabled: true },
+  devtools: { enabled: false },
 
   typescript: {
     strict: true,
@@ -31,11 +38,13 @@ export default defineNuxtConfig({
     '/': { prerender: true },
     '/calculate': { ssr: false },
     '/history': { ssr: false },
+    '/share': { ssr: false },
     '/about': { prerender: true },
   },
 
   app: {
     head: {
+      htmlAttrs: { lang: 'en' },
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
       title: meetcostConfig.appTitle,
@@ -64,7 +73,7 @@ export default defineNuxtConfig({
         globInclude: ['app/**', 'node_modules/@nuxt/ui/dist/**'],
         globExclude: ['node_modules'],
       },
-      icons: ['lucide:moon', 'lucide:sun'],
+      icons: ['lucide:moon', 'lucide:sun', 'lucide:minus', 'lucide:plus'],
     },
   },
 })

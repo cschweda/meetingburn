@@ -4,7 +4,7 @@ import { formatCurrency, formatDate, formatDuration, formatTime } from '~/utils/
 import { sanitizeString } from '~/utils/sanitize'
 
 definePageMeta({
-  layout: 'calculator',
+  layout: 'default',
 })
 
 const { meetings, clearHistory } = useMeetingHistory()

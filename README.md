@@ -14,26 +14,31 @@ MeetCost is a real-time meeting cost calculator that makes meeting waste visible
 ## Features
 
 - **Live cost counter** — Watch dollars tick up every second during meetings
-- **Setup flow** — Configure participants (full-time salary or contractor hourly rate), meeting type, and sector (public/private)
+- **Color-coded thresholds** — Green ($0–500), yellow ($501–2,000), red ($2,001+)
+- **Milestone alerts** — Toast notifications at $500, $1K, $5K, and $10K
+- **Industry presets** — One-tap setup for Tech, Government, Consulting, Agency, Corporate, and Startup
+- **Setup flow** — Configure participants (full-time salary, contractor hourly, or unknown/estimate); meeting type; and sector (public/private)
 - **Meeting timer** — Shows participant count, meeting type, and average hourly rate with an info popup
 - **Pause & resume** — Pause tracking when meetings go off-topic
-- **Shareable receipts** — Download as Markdown, TXT, CSV, or PDF; copy to clipboard
+- **Shareable receipts** — Download as Markdown, TXT, CSV, PDF, or PNG; copy to clipboard
+- **Share link** — Generate URL-encoded receipt links (`/share?r=...`) for sharing
+- **Native share API** — One-tap share to social apps on supported devices (with copy-link fallback)
 - **Duration adjustment** — Forgot to stop? Adjust duration on the receipt; cost updates in real time and auto-saves when focus leaves the adjustment field
-- **Meeting history** — Meetings saved in local storage; adjust duration and view past receipts
+- **Meeting history** — Meetings saved in local storage (up to 100); adjust duration and view past receipts
 - **Public vs. private sector** — Tag meetings as taxpayer-funded (public) or company dollars (private)
 - **Meeting types** — Quick-select from General, Stand Up, Touch Base, Sprint Planning, and more
 - **Privacy-first** — All computation runs in your browser; no data is sent to any server
 
 ## How it works
 
-1. **Setup** — Enter number of participants, their employment type (full-time or contractor), and compensation. Choose meeting type and sector.
+1. **Setup** — Pick an industry preset or enter participants manually (full-time, contractor, or unknown/estimate). Choose meeting type and sector.
 2. **Track** — Start the meeting; the cost counter updates every second.
 3. **Share** — Stop to generate a receipt. Export or copy to share with your team.
 
 ### Calculation method
 
 - **Full-time salary:** Hourly rate = annual salary ÷ 2,080 (40 hrs/week × 52 weeks)
-- **Contractor:** Hourly rate = the rate you enter
+- **Contractor / unknown:** Hourly rate = the rate you enter
 - **Total cost:** (Sum of all hourly rates) × (duration in seconds) ÷ 3,600
 
 See the [About](/about) page for a detailed explanation and examples.
@@ -43,7 +48,7 @@ See the [About](/about) page for a detailed explanation and examples.
 - **Framework:** Nuxt 4, Vue 3
 - **UI:** Nuxt UI v4, Tailwind CSS v4
 - **Language:** TypeScript
-- **Other:** @vueuse/core, jsPDF (for PDF export), Vitest (tests)
+- **Other:** @vueuse/core, jsPDF 4.x (PDF export), Vitest (tests)
 
 ## Requirements
 
@@ -88,11 +93,11 @@ yarn dev
 
 ```
 app/
-├── components/calculator/   # LiveCounter, SetupForm, Receipt
-├── composables/             # useCalculator, useReceipt, useMeetcostConfig, useMeetingHistory
+├── components/calculator/   # LiveCounter, SetupForm, Receipt, PresetPicker
+├── composables/             # useCalculator, useReceipt, useShareReceipt, usePresets, useMeetcostConfig, useMeetingHistory
 ├── layouts/                 # default, calculator
-├── pages/                   # index, calculate, about, history
-├── types/                   # Meeting, Participant, SectorType, etc.
+├── pages/                   # index, calculate, about, history, share
+├── types/                   # Meeting, Participant, SectorType, Preset, etc.
 ├── utils/                   # formatting, calculations, comparisons, sanitize
 └── app.vue
 

@@ -26,6 +26,59 @@ useSeoMeta({
       </p>
 
       <h2 class="text-xl font-semibold text-highlighted mt-10 mb-3">
+        How sharing works (privacy-first)
+      </h2>
+      <p class="text-muted leading-relaxed mb-4">
+        When you share a receipt, MeetCost creates a shareable link that contains only the <strong>summary data</strong> (total cost, duration, participant count, sector, meeting type)—no names, no salaries, no hourly rates. The link looks like this:
+      </p>
+      <p class="text-sm text-muted leading-relaxed mb-4 font-mono bg-muted/30 p-3 rounded">
+        meetcost.app/share?r=eyJ0IjoxNzM4ODk...
+      </p>
+      
+      <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
+        What is Base64 encoding?
+      </h3>
+      <p class="text-muted leading-relaxed mb-4">
+        Base64 is a simple text format that converts data into a URL-safe string of letters, numbers, and a few symbols. It's <strong>not encryption</strong>—it's just a way to pack data into a link. Think of it like a ZIP file for URLs: it makes the data compact and safe to share in a web address.
+      </p>
+      <p class="text-muted leading-relaxed mb-4">
+        <strong>Here's what happens:</strong>
+      </p>
+      <ul class="text-muted leading-relaxed mb-4 list-disc list-inside space-y-1">
+        <li><strong>Step 1:</strong> Your browser (locally, on your device) takes the meeting summary and converts it to Base64 text.</li>
+        <li><strong>Step 2:</strong> That text becomes part of the share link.</li>
+        <li><strong>Step 3:</strong> When someone clicks your link, <em>their</em> browser decodes the Base64 text and displays the receipt.</li>
+      </ul>
+
+      <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
+        You control who sees the data
+      </h3>
+      <p class="text-muted leading-relaxed mb-4">
+        Base64 is not a secret code. Anyone with the link can decode it (it's just converting text back to numbers). But <strong>only people you send the link to can see the data</strong>. No one else has the link. MeetCost never stores your data on a server—there are no servers. The encoding and decoding both happen in your browser and the recipient's browser. It's entirely in your hands.
+      </p>
+
+      <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
+        What's in the share link?
+      </h3>
+      <p class="text-muted leading-relaxed mb-4">
+        The share URL contains only aggregated, anonymized data:
+      </p>
+      <ul class="text-muted leading-relaxed mb-4 list-disc list-inside space-y-1">
+        <li>Meeting timestamp (date/time)</li>
+        <li>Duration (seconds)</li>
+        <li>Number of participants</li>
+        <li>Total cost and average rate (calculated)</li>
+        <li>Sector (public/private) and meeting type</li>
+        <li>Breakdown (how many full-time/contractor/unknown—no individual details)</li>
+      </ul>
+      <p class="text-muted leading-relaxed mb-4">
+        <strong>What's NOT shared:</strong> Individual participant salaries, hourly rates, names, roles, or any personally identifiable information. The recipient sees only the final cost summary.
+      </p>
+      <p class="text-muted leading-relaxed mb-4">
+        <strong>Bottom line:</strong> Sharing is safe because you choose who gets the link, and the link contains only summary data—never individual compensation details.
+      </p>
+
+      <h2 class="text-xl font-semibold text-highlighted mt-10 mb-3">
         How meeting cost is calculated
       </h2>
       <p class="text-muted leading-relaxed mb-4">
