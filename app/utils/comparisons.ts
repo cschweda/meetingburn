@@ -1,12 +1,12 @@
 const COMPARISONS = [
-  { item: 'Chipotle burritos', unitCost: 12 },
-  { item: 'Starbucks lattes', unitCost: 5.5 },
-  { item: 'movie tickets', unitCost: 15 },
-  { item: 'months of Netflix', unitCost: 15.49 },
-  { item: 'tanks of gas', unitCost: 50 },
-  { item: 'gym memberships', unitCost: 40 },
-  { item: 'phone bills', unitCost: 80 },
-  { item: 'weeks of groceries', unitCost: 150 },
+  { item: 'hours of consultant time', unitCost: 175 },
+  { item: 'days of contractor pay', unitCost: 600 },
+  { item: 'enterprise software licenses per month', unitCost: 75 },
+  { item: 'training course seats', unitCost: 750 },
+  { item: 'conference registrations', unitCost: 1200 },
+  { item: 'laptop replacements', unitCost: 1200 },
+  { item: 'project management licenses per month', unitCost: 15 },
+  { item: 'weekly team lunch budget', unitCost: 100 },
 ]
 
 export function generateComparison(cost: number): string {

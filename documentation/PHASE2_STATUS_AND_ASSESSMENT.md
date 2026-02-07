@@ -35,7 +35,7 @@
 | **CSV Export** | `useReceipt.ts` | ✅ | Export to CSV format |
 | **Markdown/TXT Export** | `useReceipt.ts` | ✅ | Multiple text formats |
 | **Copy to Clipboard** | `Receipt.vue` | ✅ | All formats + share link |
-| **Comparison Metrics** | `utils/comparisons.ts` | ✅ | "Same as 15 lattes" contextual comparisons |
+| **Comparison Metrics** | `utils/comparisons.ts` | ✅ | Business-equivalent comparisons (consultant hours, training seats, etc.) |
 | **Duration Adjustment** | `Receipt.vue`, `history.vue` | ✅ | Edit duration, auto-recalculate, auto-save |
 
 ### Additional Improvements (Beyond Phase 2)
@@ -89,7 +89,7 @@ X-XSS-Protection: 1; mode=block
 | `utils/calculations.test.ts` | 16 | ✅ | Cost calculations, hourly rates |
 | `utils/formatting.test.ts` | 15 | ✅ | Currency, date, time, duration formatting |
 | `utils/sanitize.test.ts` | 10 | ✅ | XSS protection, input sanitization |
-| `utils/comparisons.test.ts` | 8 | ✅ | Contextual cost comparisons |
+| `utils/comparisons.test.ts` | 8 | ✅ | Business-equivalent cost comparisons |
 | `composables/useCalculator.test.ts` | 5 | ✅ | Meeting building, participant creation |
 | `composables/useShareReceipt.test.ts` | 15 | ✅ | **Privacy tests**: No PII in share links |
 | **Total** | **69** | ✅ | **100% passing** |

@@ -245,7 +245,7 @@ Updating DOM every 100ms (10 times per second) may cause performance issues, esp
 **Problem:**
 - Comparison metrics use fixed unit costs that may become outdated
 - No source attribution for cost data
-- Random selection may show inappropriate comparisons (e.g., "$50,000 = 4,000 burritos" is less impactful than "$50,000 = 1 year of college")
+- Random selection may show inappropriate comparisons (e.g., "$50,000 = 4,000 burritos" is less impactful than "$50,000 = 67 training course seats")
 
 **Recommendation:**
 - Add date stamps to comparison data

@@ -127,10 +127,11 @@ useSeoMeta({
                 3 people at $90K/year → 3 × ($90,000 ÷ 2,080) = $129.81/hr. Thirty minutes: $129.81 × 0.5 = <strong class="text-highlighted">$64.90</strong>.
               </p>
               <div class="rounded-lg bg-default/50 p-4 text-sm">
-                <p class="font-medium text-highlighted mb-2">Or that could buy…</p>
+                <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
                 <ul class="text-muted space-y-1 text-sm">
-                  <li><span class="text-highlighted">Serious:</span> A month of school lunches for a child, or a full tank of gas for a family road trip.</li>
-                  <li><span class="text-highlighted">Less serious:</span> 5 Chipotle burritos, or 12 Starbucks lattes, or 4 months of Netflix.</li>
+                  <li>About 1 hour of consultant time at $175/hr</li>
+                  <li>4 enterprise software licenses per month ($75 each)</li>
+                  <li>4 project management licenses for a year ($15/mo each)</li>
                 </ul>
               </div>
             </div>
@@ -149,10 +150,10 @@ useSeoMeta({
                 6-person team (avg $100K/year), 1-hour weekly sync. Per meeting: 6 × ($100,000 ÷ 2,080) × 1 = <strong class="text-highlighted">$288</strong>. Over 52 weeks: <strong class="text-highlighted">~$15,000/year</strong>.
               </p>
               <div class="rounded-lg bg-default/50 p-4 text-sm">
-                <p class="font-medium text-highlighted mb-2">Or that could buy…</p>
+                <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
                 <ul class="text-muted space-y-1 text-sm">
-                  <li><span class="text-highlighted">Serious:</span> Per meeting: 2 weeks of groceries for a family. Per year: a used car down payment, or a year of community college tuition.</li>
-                  <li><span class="text-highlighted">Less serious:</span> Per meeting: 24 burritos. Per year: 1,250 lattes—enough to caffeinate the whole team for months.</li>
+                  <li>Per meeting: 2 days of contractor pay ($600/day), or 20 enterprise licenses per month</li>
+                  <li>Per year: 25 training course seats ($750 each), or 2 conference registrations ($1,200 each), or 200 consultant hours</li>
                 </ul>
               </div>
             </div>
@@ -171,10 +172,11 @@ useSeoMeta({
                 15 people (avg $95K/year), 1-hour unit meeting. 15 × ($95,000 ÷ 2,080) × 1 = <strong class="text-highlighted">$685</strong>.
               </p>
               <div class="rounded-lg bg-default/50 p-4 text-sm">
-                <p class="font-medium text-highlighted mb-2">Or that could buy…</p>
+                <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
                 <ul class="text-muted space-y-1 text-sm">
-                  <li><span class="text-highlighted">Serious:</span> A week of groceries for a family of four, or a new tablet for a student, or 4–5 tanks of gas.</li>
-                  <li><span class="text-highlighted">Less serious:</span> 57 Chipotle burritos, or 46 movie tickets—enough for the whole unit to see a film together.</li>
+                  <li>4 hours of consultant time ($175/hr)</li>
+                  <li>1 conference registration ($1,200)</li>
+                  <li>9 enterprise software licenses per month</li>
                 </ul>
               </div>
             </div>
@@ -193,10 +195,10 @@ useSeoMeta({
                 75 people (avg $70K/year, blended public-sector rate), 8am–4:30pm with 1 hour for lunch = 7.5 hours. At 8am: <strong class="text-highlighted">$0</strong>. At 4:30pm: 75 × ($70,000 ÷ 2,080) × 7.5 = <strong class="text-highlighted">~$18,900</strong> per meeting. Quarterly = 4× per year: <strong class="text-highlighted">~$75,600</strong> annually. <em>Taxpayer dollars.</em>
               </p>
               <div class="rounded-lg bg-default/50 p-4 text-sm">
-                <p class="font-medium text-highlighted mb-2">Or that could buy…</p>
+                <p class="font-medium text-highlighted mb-2">Business equivalent (taxpayer dollars):</p>
                 <ul class="text-muted space-y-1 text-sm">
-                  <li><span class="text-highlighted">Serious (per meeting):</span> 2–3 police body cameras, or 9 months of school lunches for 100 kids. <span class="text-highlighted">Per year:</span> a full-time entry-level teacher salary, or a year of rent for 5–6 low-income families.</li>
-                  <li><span class="text-highlighted">Less serious:</span> Per meeting: 1,575 burritos—enough for every attendee to have 21 each. Per year: a small fleet of burritos.</li>
+                  <li>Per meeting: 25 training course seats, or 15 laptop replacements, or 108 consultant hours</li>
+                  <li>Per year: 100 training seats, or 63 laptops, or a full-time entry-level public-sector salary</li>
                 </ul>
               </div>
             </div>
@@ -215,10 +217,10 @@ useSeoMeta({
                 5-person team (avg $100K/year), 15-minute daily standup. 5 × ($100,000 ÷ 2,080) × 0.25 = <strong class="text-highlighted">$60</strong> per meeting. Daily = ~260 working days/year: <strong class="text-highlighted">~$15,600/year</strong>.
               </p>
               <div class="rounded-lg bg-default/50 p-4 text-sm">
-                <p class="font-medium text-highlighted mb-2">Or that could buy…</p>
+                <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
                 <ul class="text-muted space-y-1 text-sm">
-                  <li><span class="text-highlighted">Serious:</span> Per day: a tank of gas. Per year: a used car, or a year of community college—for a meeting that often could've been a Slack message.</li>
-                  <li><span class="text-highlighted">Less serious:</span> Per day: 5 burritos. Per year: 1,300 lattes—one per standup, for the whole team.</li>
+                  <li>Per day: 1 hour of contractor time ($60). Per year: 26 training course seats, or 13 laptop replacements—for a meeting that often could've been a Slack message.</li>
+                  <li>Annual cost: 1,040 enterprise software licenses, or 104 consultant hours</li>
                 </ul>
               </div>
             </div>

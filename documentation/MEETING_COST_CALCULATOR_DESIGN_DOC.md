@@ -182,7 +182,7 @@ yarn build
 - [ ] Employment type selector (full-time/contractor/unknown)
 - [ ] Canvas-based receipt image generator (PNG export)
 - [ ] Native share API integration
-- [ ] Comparison metrics ("This meeting = X burritos")
+- [ ] Comparison metrics ("This meeting = X hours of consultant time")
 - [ ] Color-coded cost thresholds (green/yellow/red)
 - [ ] Milestone alerts ($500, $1K, $5K)
 - [ ] Basic localStorage history (save last 10 meetings)
@@ -485,7 +485,7 @@ interface Preset {
 interface Receipt {
   id: string
   meeting: Meeting
-  comparisonMetric: string       // "47 Chipotle burritos"
+  comparisonMetric: string       // "47 hours of consultant time"
   generatedAt: number
   imageUrl?: string              // Base64 data URL (client-side only; no server storage)
   exports?: {
@@ -770,8 +770,8 @@ Receipt displays (large, readable format):
     │                                              │
     │  💡 FUN FACT:                                │
     │  This meeting cost the same as:              │
-    │  • 297 Chipotle burritos                     │
-    │  • 3 weeks of groceries                      │
+    │  • 170 hours of consultant time              │
+    │  • 49 training course seats                  │
     │  • 1.2 round-trip flights to NYC             │
     │  [16px font, light gray]                     │
     │                                              │
@@ -1221,8 +1221,8 @@ MeetCost supports four export formats to maximize shareability and data portabil
 
 ### Fun Fact
 This meeting cost the same as:
-- 297 Chipotle burritos
-- 3 weeks of groceries
+- 170 hours of consultant time
+- 49 training course seats
 - 1.2 round-trip flights to NYC
 
 ### If Repeated Weekly
@@ -1267,8 +1267,8 @@ TOTAL COST: $5,947.23
 
 Fun Fact:
 This meeting cost the same as:
-- 297 Chipotle burritos
-- 3 weeks of groceries
+- 170 hours of consultant time
+- 49 training course seats
 - 1.2 round-trip flights to NYC
 
 If Repeated Weekly:
@@ -1651,14 +1651,14 @@ const PRESETS: Record<PresetType, Preset> = {
 ```typescript
 const generateComparison = (cost: number): string => {
   const comparisons = [
-    { item: 'Chipotle burritos', unitCost: 12 },
-    { item: 'Starbucks lattes', unitCost: 5.50 },
-    { item: 'movie tickets', unitCost: 15 },
-    { item: 'months of Netflix', unitCost: 15.49 },
-    { item: 'tanks of gas', unitCost: 50 },
-    { item: 'gym memberships', unitCost: 40 },
-    { item: 'phone bills', unitCost: 80 },
-    { item: 'weeks of groceries', unitCost: 150 }
+    { item: 'hours of consultant time', unitCost: 175 },
+    { item: 'days of contractor pay', unitCost: 600 },
+    { item: 'enterprise software licenses per month', unitCost: 75 },
+    { item: 'training course seats', unitCost: 750 },
+    { item: 'conference registrations', unitCost: 1200 },
+    { item: 'laptop replacements', unitCost: 1200 },
+    { item: 'project management licenses per month', unitCost: 15 },
+    { item: 'weekly team lunch budget', unitCost: 100 }
   ]
   
   const random = comparisons[
