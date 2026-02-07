@@ -26,6 +26,16 @@ useSeoMeta({
       </p>
 
       <h2 class="text-xl font-semibold text-highlighted mt-10 mb-3">
+        When remote beats in-person (and when it doesn't)
+      </h2>
+      <p class="text-muted leading-relaxed mb-4">
+        Remote meetings (Zoom, Teams, Webex) can be <strong>more effective</strong> than in-person for many use cases: no commute, no room booking, easier to record and replay, and—crucially for coders—less disruption to flow state. In-person all-hands often require everyone to travel, sit in a room, and listen to updates that could have been a Slack message or a 5-minute async video. The cost is the same either way; the question is whether the format justifies it.
+      </p>
+      <p class="text-muted leading-relaxed mb-4">
+        In-person still wins for team building, complex negotiations, and whiteboard brainstorming. But for status updates, standups, and one-way announcements, remote (or better yet, async Slack/Teams) is often more efficient and less draining. MeetCost helps you see the cost either way—so you can decide whether the meeting format is worth it.
+      </p>
+
+      <h2 class="text-xl font-semibold text-highlighted mt-10 mb-3">
         How sharing works (privacy-first)
       </h2>
       <p class="text-muted leading-relaxed mb-4">
@@ -128,11 +138,12 @@ useSeoMeta({
               </p>
               <div class="rounded-lg bg-default/50 p-4 text-sm">
                 <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
-                <ul class="text-muted space-y-1 text-sm">
+                <ul class="text-muted space-y-1 text-sm list-disc list-inside">
                   <li>About 1 hour of consultant time at $175/hr</li>
                   <li>4 enterprise software licenses per month ($75 each)</li>
                   <li>4 project management licenses for a year ($15/mo each)</li>
                 </ul>
+                <p class="text-muted text-sm mt-2 italic">—Could this have been a Slack or Teams message? Async updates often work for status syncs.</p>
               </div>
             </div>
           </div>
@@ -151,10 +162,18 @@ useSeoMeta({
               </p>
               <div class="rounded-lg bg-default/50 p-4 text-sm">
                 <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
-                <ul class="text-muted space-y-1 text-sm">
-                  <li>Per meeting: 2 days of contractor pay ($600/day), or 20 enterprise licenses per month</li>
-                  <li>Per year: 25 training course seats ($750 each), or 2 conference registrations ($1,200 each), or 200 consultant hours</li>
+                <p class="text-muted text-sm font-medium mt-2 mb-1">Per meeting:</p>
+                <ul class="text-muted space-y-1 text-sm list-disc list-inside">
+                  <li>2 days of contractor pay ($600/day)</li>
+                  <li>20 enterprise licenses per month</li>
                 </ul>
+                <p class="text-muted text-sm font-medium mt-2 mb-1">Per year:</p>
+                <ul class="text-muted space-y-1 text-sm list-disc list-inside">
+                  <li>25 training course seats ($750 each)</li>
+                  <li>2 conference registrations ($1,200 each)</li>
+                  <li>200 consultant hours</li>
+                </ul>
+                <p class="text-muted text-sm mt-2 italic">—Could this have been a Slack or Teams message? Weekly syncs often repeat the same info—a shared doc or async update might suffice.</p>
               </div>
             </div>
           </div>
@@ -173,11 +192,12 @@ useSeoMeta({
               </p>
               <div class="rounded-lg bg-default/50 p-4 text-sm">
                 <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
-                <ul class="text-muted space-y-1 text-sm">
+                <ul class="text-muted space-y-1 text-sm list-disc list-inside">
                   <li>4 hours of consultant time ($175/hr)</li>
                   <li>1 conference registration ($1,200)</li>
                   <li>9 enterprise software licenses per month</li>
                 </ul>
+                <p class="text-muted text-sm mt-2 italic">—Could this have been a Slack or Teams message? Large meetings sap concentration from coders; a thread or announcement often reaches everyone without the cost.</p>
               </div>
             </div>
           </div>
@@ -196,10 +216,19 @@ useSeoMeta({
               </p>
               <div class="rounded-lg bg-default/50 p-4 text-sm">
                 <p class="font-medium text-highlighted mb-2">Business equivalent (taxpayer dollars):</p>
-                <ul class="text-muted space-y-1 text-sm">
-                  <li>Per meeting: 25 training course seats, or 15 laptop replacements, or 108 consultant hours</li>
-                  <li>Per year: 100 training seats, or 63 laptops, or a full-time entry-level public-sector salary</li>
+                <p class="text-muted text-sm font-medium mt-2 mb-1">Per meeting:</p>
+                <ul class="text-muted space-y-1 text-sm list-disc list-inside">
+                  <li>25 training course seats</li>
+                  <li>15 laptop replacements</li>
+                  <li>108 consultant hours</li>
                 </ul>
+                <p class="text-muted text-sm font-medium mt-2 mb-1">Per year:</p>
+                <ul class="text-muted space-y-1 text-sm list-disc list-inside">
+                  <li>100 training seats</li>
+                  <li>63 laptops</li>
+                  <li>Full-time entry-level public-sector salary</li>
+                </ul>
+                <p class="text-muted text-sm mt-2 italic">—Retreats serve team-building. But routine "all hands" updates could often be a Slack or Teams message instead.</p>
               </div>
             </div>
           </div>
@@ -218,10 +247,18 @@ useSeoMeta({
               </p>
               <div class="rounded-lg bg-default/50 p-4 text-sm">
                 <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
-                <ul class="text-muted space-y-1 text-sm">
-                  <li>Per day: 1 hour of contractor time ($60). Per year: 26 training course seats, or 13 laptop replacements—for a meeting that often could've been a Slack message.</li>
-                  <li>Annual cost: 1,040 enterprise software licenses, or 104 consultant hours</li>
+                <p class="text-muted text-sm font-medium mt-2 mb-1">Per day:</p>
+                <ul class="text-muted space-y-1 text-sm list-disc list-inside">
+                  <li>1 hour of contractor time ($60)</li>
                 </ul>
+                <p class="text-muted text-sm font-medium mt-2 mb-1">Per year:</p>
+                <ul class="text-muted space-y-1 text-sm list-disc list-inside">
+                  <li>26 training course seats</li>
+                  <li>13 laptop replacements</li>
+                  <li>1,040 enterprise software licenses</li>
+                  <li>104 consultant hours</li>
+                </ul>
+                <p class="text-muted text-sm mt-2 italic">—Could this have been a Slack or Teams message? Daily standups often could—async, maybe, but still effective without sapping concentration from coders.</p>
               </div>
             </div>
           </div>
