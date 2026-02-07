@@ -56,4 +56,15 @@ export default defineNuxtConfig({
     fallback: 'dark',
     classSuffix: '',
   },
+
+  icon: {
+    provider: 'none',
+    clientBundle: {
+      scan: {
+        globInclude: ['app/**', 'node_modules/@nuxt/ui/dist/**'],
+        globExclude: ['node_modules'],
+      },
+      icons: ['lucide:moon', 'lucide:sun'],
+    },
+  },
 })
