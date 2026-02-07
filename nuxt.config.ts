@@ -23,6 +23,10 @@ export default defineNuxtConfig({
 
   ssr: true,
 
+  nitro: {
+    preset: 'static',
+  },
+
   routeRules: {
     '/': { prerender: true },
     '/calculate': { ssr: false },
