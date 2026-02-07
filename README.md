@@ -15,8 +15,11 @@ MeetCost is a real-time meeting cost calculator that makes meeting waste visible
 
 - **Live cost counter** — Watch dollars tick up every second during meetings
 - **Setup flow** — Configure participants (full-time salary or contractor hourly rate), meeting type, and sector (public/private)
+- **Meeting timer** — Shows participant count, meeting type, and average hourly rate with an info popup
 - **Pause & resume** — Pause tracking when meetings go off-topic
 - **Shareable receipts** — Download as Markdown, TXT, CSV, or PDF; copy to clipboard
+- **Duration adjustment** — Forgot to stop? Adjust duration on the receipt; cost updates in real time and auto-saves when focus leaves the adjustment field
+- **Meeting history** — Meetings saved in local storage; adjust duration and view past receipts
 - **Public vs. private sector** — Tag meetings as taxpayer-funded (public) or company dollars (private)
 - **Meeting types** — Quick-select from General, Stand Up, Touch Base, 1:1, Sprint Planning, and more
 - **Privacy-first** — All computation runs in your browser; no data is sent to any server
@@ -40,7 +43,7 @@ See the [About](/about) page for a detailed explanation and examples.
 - **Framework:** Nuxt 4, Vue 3
 - **UI:** Nuxt UI v4, Tailwind CSS v4
 - **Language:** TypeScript
-- **Other:** @vueuse/core, jsPDF (for PDF export)
+- **Other:** @vueuse/core, jsPDF (for PDF export), Vitest (tests)
 
 ## Requirements
 
@@ -61,6 +64,9 @@ yarn generate
 
 # Preview production build
 yarn preview
+
+# Run tests
+yarn test
 ```
 
 ### Using nvm
@@ -76,13 +82,14 @@ yarn dev
 ```
 app/
 ├── components/calculator/   # LiveCounter, SetupForm, Receipt
-├── composables/             # useCalculator, useReceipt, useMeetcostConfig
+├── composables/             # useCalculator, useReceipt, useMeetcostConfig, useMeetingHistory
 ├── layouts/                 # default, calculator
 ├── pages/                   # index, calculate, about, history
 ├── types/                   # Meeting, Participant, SectorType, etc.
-├── utils/                   # formatting, calculations, comparisons
+├── utils/                   # formatting, calculations, comparisons (+ tests)
 └── app.vue
 
+public/                      # Static assets (favicon, screenshots)
 meetcost.config.ts           # Single source of truth for app config
 ```
 
