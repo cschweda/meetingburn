@@ -1,0 +1,258 @@
+<script setup lang="ts">
+import type { Meeting } from '~/types'
+import { formatCurrency, formatDate, formatDuration, formatTime } from '~/utils/formatting'
+import { generateComparisonList } from '~/utils/comparisons'
+import { useReceipt } from '~/composables/useReceipt'
+import { sanitizeString } from '~/utils/sanitize'
+
+const props = defineProps<{
+  meeting: Meeting
+  showComparison?: boolean
+  showBreakdown?: boolean
+}>()
+
+const showComparison = computed(() => props.showComparison ?? true)
+const showBreakdown = computed(() => props.showBreakdown ?? true)
+
+const sanitizedMeetingDescription = computed(() =>
+  props.meeting.meetingDescription ? sanitizeString(props.meeting.meetingDescription, 200) : ''
+)
+
+const {
+  generateMarkdown,
+  generatePlainText,
+  generateCSV,
+  generatePDF,
+  downloadFile,
+  copyToClipboard,
+  getParticipantBreakdown,
+} = useReceipt()
+
+const { receiptFooter, sectorLabels, sectorDisclaimer } = useMeetcostConfig()
+const toast = useToast()
+const copySuccess = ref<'markdown' | 'plain' | null>(null)
+
+const duration = computed(() => formatDuration(props.meeting.duration))
+const breakdown = computed(() => getParticipantBreakdown(props.meeting.participants))
+const comparisons = computed(() => generateComparisonList(props.meeting.totalCost))
+
+const breakdownLines = computed(() => {
+  const lines: string[] = []
+  if (breakdown.value.fulltime > 0) lines.push(`${breakdown.value.fulltime} full-time employees`)
+  if (breakdown.value.contractor > 0) lines.push(`${breakdown.value.contractor} contractors`)
+  if (breakdown.value.unknown > 0) lines.push(`${breakdown.value.unknown} unknown/estimated`)
+  return lines
+})
+
+const timestamp = computed(() =>
+  new Date(props.meeting.timestamp).toISOString().replace(/[:.]/g, '-').slice(0, 19)
+)
+
+function showCopySuccess(type: 'markdown' | 'plain') {
+  copySuccess.value = type
+  toast.add({ title: `Copied as ${type === 'markdown' ? 'Markdown' : 'plain text'}`, color: 'success', icon: 'i-lucide-check' })
+  setTimeout(() => {
+    copySuccess.value = null
+  }, 2000)
+}
+
+async function copyAsMarkdown() {
+  const success = await copyToClipboard(generateMarkdown(props.meeting))
+  if (success) showCopySuccess('markdown')
+  else toast.add({ title: 'Failed to copy', color: 'error' })
+}
+
+async function copyAsPlainText() {
+  const success = await copyToClipboard(generatePlainText(props.meeting))
+  if (success) showCopySuccess('plain')
+  else toast.add({ title: 'Failed to copy', color: 'error' })
+}
+
+function downloadMarkdown() {
+  downloadFile(generateMarkdown(props.meeting), `meeting-receipt-${timestamp.value}.md`, 'text/markdown;charset=utf-8')
+  toast.add({ title: 'Downloaded Markdown', color: 'success' })
+}
+
+function downloadPlainText() {
+  downloadFile(generatePlainText(props.meeting), `meeting-receipt-${timestamp.value}.txt`, 'text/plain;charset=utf-8')
+  toast.add({ title: 'Downloaded TXT', color: 'success' })
+}
+
+function downloadCSV() {
+  downloadFile(generateCSV(props.meeting), `meeting-receipt-${timestamp.value}.csv`, 'text/csv;charset=utf-8')
+  toast.add({ title: 'Downloaded CSV', color: 'success' })
+}
+
+async function downloadPDF() {
+  const blob = await generatePDF(props.meeting)
+  downloadFile(blob, `meeting-receipt-${timestamp.value}.pdf`, 'application/pdf')
+  toast.add({ title: 'Downloaded PDF', color: 'success' })
+}
+</script>
+
+<template>
+  <div class="max-w-2xl mx-auto p-6" data-test="receipt">
+    <div class="bg-default border border-default rounded-lg p-6 shadow-sm">
+      <h2 class="text-2xl font-bold text-highlighted mb-4 flex items-center gap-2">
+        <UIcon name="i-lucide-receipt" class="size-7" aria-hidden="true" />
+        Meeting Receipt
+      </h2>
+
+      <div
+        v-if="meeting.sectorType"
+        class="mb-4 px-4 py-2 rounded-full text-sm font-semibold w-fit"
+        :class="meeting.sectorType === 'public' ? 'bg-primary/20 text-primary' : 'bg-muted text-muted'"
+      >
+        {{ sectorLabels[meeting.sectorType] }}
+      </div>
+      <p v-if="sanitizedMeetingDescription" class="text-lg font-medium text-highlighted mb-2">
+        {{ sanitizedMeetingDescription }}
+      </p>
+      <p class="text-muted mb-6">
+        {{ formatDate(meeting.timestamp) }} • {{ formatTime(meeting.timestamp) }}
+      </p>
+
+      <div class="space-y-4 mb-6">
+        <div>
+          <p class="text-sm font-medium text-muted">DURATION</p>
+          <p class="text-xl font-bold">
+            {{ duration.readable }}
+            <span class="text-base font-normal text-muted">
+              ({{ duration.totalSeconds >= 60
+                ? duration.totalMinutes + ' minute' + (duration.totalMinutes !== 1 ? 's' : '')
+                : duration.totalSeconds + ' second' + (duration.totalSeconds !== 1 ? 's' : '')
+              }})
+            </span>
+          </p>
+        </div>
+
+        <div>
+          <p class="text-sm font-medium text-muted">ATTENDEES</p>
+          <p class="text-lg">
+            {{ meeting.participants.length }} people
+          </p>
+          <ul v-if="showBreakdown && breakdownLines.length" class="mt-1 text-muted list-disc list-inside">
+            <li v-for="line in breakdownLines" :key="line">
+              {{ line }}
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="text-sm font-medium text-muted">AVERAGE RATE</p>
+          <p class="text-lg">
+            {{ formatCurrency(meeting.averageRate) }}/hour
+          </p>
+          <p class="text-xs text-muted mt-1">
+            Sum of each participant's hourly rate ÷ number of participants. Full-time: salary ÷ 2,080 hrs/yr (40 hrs/week × 52 weeks). Contractor: hourly rate.
+          </p>
+        </div>
+      </div>
+
+      <div class="border-t border-default pt-6 mb-6">
+        <p class="text-sm font-medium text-muted mb-1">TOTAL COST</p>
+        <p class="text-4xl font-bold text-error">
+          {{ formatCurrency(meeting.totalCost) }}
+        </p>
+        <p class="text-xs text-muted mt-1">
+          (Sum of hourly rates × duration in seconds) ÷ 3,600 sec/hr
+        </p>
+      </div>
+
+      <div v-if="showComparison && comparisons.length" class="mb-6 p-4 bg-muted/30 rounded-lg">
+        <p class="text-sm font-medium text-muted mb-2">This meeting cost the same as:</p>
+        <ul class="list-disc list-inside text-muted">
+          <li v-for="c in comparisons" :key="c">{{ c }}</li>
+        </ul>
+      </div>
+
+      <div class="mb-6 text-sm text-muted">
+        <p><strong>If repeated weekly:</strong> Annual cost: {{ formatCurrency(meeting.totalCost * 52) }}</p>
+        <p class="mt-1">
+          Per-minute: {{ formatCurrency(meeting.costPerMinute) }}/min •
+          Per-second: {{ formatCurrency(meeting.costPerSecond) }}/sec
+        </p>
+      </div>
+
+      <p v-if="meeting.sectorType === 'public'" class="text-sm text-muted mb-2">
+        {{ sectorDisclaimer }}
+      </p>
+      <p class="text-xs text-muted mb-6">
+        {{ receiptFooter }}
+      </p>
+
+      <div class="space-y-6">
+        <div>
+          <p class="text-sm font-medium text-muted mb-3">Download</p>
+          <div class="flex flex-wrap gap-3">
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="lg"
+              class="min-h-[48px]"
+              icon="i-lucide-file-down"
+              @click="downloadMarkdown"
+            >
+              Markdown
+            </UButton>
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="lg"
+              class="min-h-[48px]"
+              icon="i-lucide-file-down"
+              @click="downloadPlainText"
+            >
+              TXT
+            </UButton>
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="lg"
+              class="min-h-[48px]"
+              icon="i-lucide-file-down"
+              @click="downloadCSV"
+            >
+              CSV
+            </UButton>
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="lg"
+              class="min-h-[48px]"
+              icon="i-lucide-file-down"
+              @click="downloadPDF"
+            >
+              PDF
+            </UButton>
+          </div>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-muted mb-3">Copy to clipboard</p>
+          <div class="flex flex-wrap gap-3">
+            <UButton
+              :color="copySuccess === 'markdown' ? 'success' : 'neutral'"
+              :variant="copySuccess === 'markdown' ? 'soft' : 'outline'"
+              size="lg"
+              class="min-h-[48px]"
+              :icon="copySuccess === 'markdown' ? 'i-lucide-check' : 'i-lucide-copy'"
+              @click="copyAsMarkdown"
+            >
+              {{ copySuccess === 'markdown' ? 'Copied!' : 'Copy as Markdown' }}
+            </UButton>
+            <UButton
+              :color="copySuccess === 'plain' ? 'success' : 'neutral'"
+              :variant="copySuccess === 'plain' ? 'soft' : 'outline'"
+              size="lg"
+              class="min-h-[48px]"
+              :icon="copySuccess === 'plain' ? 'i-lucide-check' : 'i-lucide-copy'"
+              @click="copyAsPlainText"
+            >
+              {{ copySuccess === 'plain' ? 'Copied!' : 'Copy as Plain Text' }}
+            </UButton>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
