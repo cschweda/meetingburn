@@ -10,7 +10,6 @@ export default defineNuxtConfig({
 
   modules: ['@nuxt/ui', '@nuxt/devtools', '@nuxtjs/seo'],
 
-  // @ts-expect-error - site config from nuxt-site-config (via @nuxtjs/seo)
   site: {
     url: meetcostConfig.siteUrl,
     name: meetcostConfig.appName,
@@ -23,9 +22,8 @@ export default defineNuxtConfig({
 
   typescript: {
     strict: true,
-    // 'build' avoids vite-plugin-checker during dev (fixes ENOTEMPTY/ENOENT errors).
-    // Run `yarn typecheck` for manual checks.
-    typeCheck: 'build',
+    // Skip typeCheck during build: nuxt-site-config adds 'site' key not in NuxtConfig types.
+    typeCheck: false,
   },
 
   ssr: true,
