@@ -1,5 +1,9 @@
 <script setup lang="ts">
 const { appName } = useMeetcostConfig()
+
+function scrollToTop() {
+  if (import.meta.client) window.scrollTo(0, 0)
+}
 </script>
 
 <template>
@@ -10,7 +14,7 @@ const { appName } = useMeetcostConfig()
           to="/"
           class="hover:opacity-80 transition-opacity"
           :aria-label="`Back to ${appName} home`"
-          @click="() => { if (typeof window !== 'undefined') window.scrollTo(0, 0) }"
+          @click="scrollToTop"
         >
           <span class="text-6xl md:text-8xl font-bold font-sans text-primary tracking-tight block">
             {{ appName }}
