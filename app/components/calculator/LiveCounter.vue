@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useIntervalFn } from '@vueuse/core'
-import { formatCurrency, formatElapsedTime } from '~/utils/formatting'
+import { formatCurrency, formatElapsedTime, formatHourlyRate } from '~/utils/formatting'
 
 function formatCostPerSecond(value: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -11,15 +11,19 @@ function formatCostPerSecond(value: number): string {
   }).format(value)
 }
 import type { Participant, SectorType } from '~/types'
-import { getCostPerSecond } from '~/utils/calculations'
+import { getAverageHourlyRate, getCostPerSecond } from '~/utils/calculations'
 
-const props = defineProps<{
-  participants: Participant[]
-  sectorType: SectorType
-  isRunning: boolean
-  isPaused: boolean
-  startTime: number
-}>()
+const props = withDefaults(
+  defineProps<{
+    participants: Participant[]
+    sectorType: SectorType
+    meetingType?: string
+    isRunning: boolean
+    isPaused: boolean
+    startTime: number
+  }>(),
+  { meetingType: 'General' }
+)
 
 const { sectorLabels } = useMeetcostConfig()
 const sectorLabel = computed(() => sectorLabels[props.sectorType])
@@ -31,6 +35,17 @@ const emit = defineEmits<{
 }>()
 
 const costPerSecond = computed(() => getCostPerSecond(props.participants))
+
+const activeParticipantCount = computed(() =>
+  props.participants.filter((p) => p.isActive).length
+)
+
+const averageHourlyRate = computed(() => getAverageHourlyRate(props.participants))
+
+const averageHourlyRateDisplay = computed(() => {
+  const rate = averageHourlyRate.value
+  return rate !== null ? formatHourlyRate(rate) : '—'
+})
 
 const elapsedSeconds = ref(0)
 const pausedAtSeconds = ref<number | null>(null)
@@ -127,6 +142,48 @@ const startTimeFormatted = computed(() => {
     </p>
 
     <div class="mt-8 flex flex-col items-center gap-2 text-xl text-muted font-medium">
+      <span class="flex items-center gap-2">
+        <UIcon name="i-lucide-layout-list" class="size-5" aria-hidden="true" />
+        {{ meetingType }}
+      </span>
+      <span class="flex items-center gap-2">
+        <UIcon name="i-lucide-users" class="size-5" aria-hidden="true" />
+        {{ activeParticipantCount }} {{ activeParticipantCount === 1 ? 'participant' : 'participants' }}
+      </span>
+      <span class="flex items-center gap-2 flex-wrap justify-center" data-test="avg-hourly-rate">
+        <UIcon name="i-lucide-dollar-sign" class="size-5 shrink-0" aria-hidden="true" />
+        <span>Avg. {{ averageHourlyRateDisplay }}</span>
+        <ClientOnly>
+          <UPopover :content="{ side: 'top', align: 'center', sideOffset: 8 }">
+            <UButton
+              variant="soft"
+              color="neutral"
+              size="sm"
+              icon="i-lucide-info"
+              aria-label="Learn more about average hourly rate"
+              class="shrink-0"
+            >
+              Learn more
+            </UButton>
+            <template #content>
+              <div class="p-4 max-w-sm text-sm space-y-2 bg-muted/90 dark:bg-muted/80 rounded-lg shadow-lg ring-1 ring-default">
+                <p class="font-semibold text-foreground">
+                  Average hourly rate
+                </p>
+                <p class="text-muted">
+                  This is the average cost per hour across all participants, based on their salaries or hourly rates. For full-time employees, annual salary is converted to hourly (salary ÷ 2,080 working hours per year).
+                </p>
+                <p class="text-muted">
+                  The meeting cost above is the sum of all participants' hourly rates × elapsed time.
+                </p>
+              </div>
+            </template>
+          </UPopover>
+          <template #fallback>
+            <span class="opacity-70 text-sm">(Learn more)</span>
+          </template>
+        </ClientOnly>
+      </span>
       <span class="flex items-center gap-2">
         <UIcon name="i-lucide-clock" class="size-5" aria-hidden="true" />
         {{ formatElapsedTime(displaySeconds) }} elapsed

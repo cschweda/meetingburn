@@ -9,6 +9,10 @@ export function formatCurrency(value: number): string {
   }).format(value)
 }
 
+export function formatHourlyRate(value: number): string {
+  return `${formatCurrency(value)}/hr`
+}
+
 export function formatDuration(seconds: number): DurationFormat {
   const totalSecs = Math.floor(seconds)
   const hours = Math.floor(totalSecs / 3600)

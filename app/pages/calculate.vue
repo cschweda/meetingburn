@@ -81,6 +81,7 @@ function handleNewMeeting() {
       <CalculatorLiveCounter
         :participants="participants"
         :sector-type="sectorType"
+        :meeting-type="meetingDescription"
         :is-running="isRunning"
         :is-paused="isPaused"
         :start-time="startTime"
@@ -92,7 +93,10 @@ function handleNewMeeting() {
 
     <template v-else-if="view === 'receipt' && completedMeeting">
       <div class="container mx-auto px-4 py-8">
-        <CalculatorReceipt :meeting="completedMeeting" />
+        <CalculatorReceipt
+          :meeting="completedMeeting"
+          @update:meeting="completedMeeting = $event"
+        />
         <div class="max-w-2xl mx-auto mt-8 flex justify-center">
           <UButton
             size="xl"

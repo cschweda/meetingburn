@@ -4,6 +4,13 @@
 
 MeetCost is a real-time meeting cost calculator that makes meeting waste visible. Track the true cost of meetings with a live-ticking counter, shareable receipts, and support for both private-sector and taxpayer-funded (public-sector) contexts.
 
+## Screenshots
+
+| | |
+|:-------------------------:|:-------------------------:|
+| ![Screenshot 1](public/Screenshot1.jpg) | ![Screenshot 2](public/screenshot2.jpg) |
+| ![Screenshot 3](public/screenshot3.jpg) | ![Screenshot 4](public/screenshot4.jpg) |
+
 ## Features
 
 - **Live cost counter** — Watch dollars tick up every second during meetings

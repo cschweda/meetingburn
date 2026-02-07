@@ -53,3 +53,13 @@ export function getCostPerSecond(participants: Participant[]): number {
   )
   return totalHourlyRate / 3600
 }
+
+export function getAverageHourlyRate(participants: Participant[]): number | null {
+  const activeParticipants = participants.filter((p) => p.isActive)
+  if (activeParticipants.length === 0) return null
+  const totalHourlyRate = activeParticipants.reduce(
+    (sum, p) => sum + (p.effectiveHourlyRate || 0),
+    0
+  )
+  return totalHourlyRate / activeParticipants.length
+}

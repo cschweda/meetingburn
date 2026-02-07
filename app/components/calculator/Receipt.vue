@@ -3,6 +3,8 @@ import type { Meeting } from '~/types'
 import { formatCurrency, formatDate, formatDuration, formatTime } from '~/utils/formatting'
 import { generateComparisonList } from '~/utils/comparisons'
 import { useReceipt } from '~/composables/useReceipt'
+import { useCalculator } from '~/composables/useCalculator'
+import { useMeetingHistory } from '~/composables/useMeetingHistory'
 import { sanitizeString } from '~/utils/sanitize'
 
 const props = defineProps<{
@@ -10,6 +12,14 @@ const props = defineProps<{
   showComparison?: boolean
   showBreakdown?: boolean
 }>()
+
+const emit = defineEmits<{
+  'update:meeting': [meeting: Meeting]
+  'update:preview': [payload: { meetingId: string; durationSeconds: number; totalCost: number } | null]
+}>()
+
+const { buildMeeting } = useCalculator()
+const { updateMeeting } = useMeetingHistory()
 
 const showComparison = computed(() => props.showComparison ?? true)
 const showBreakdown = computed(() => props.showBreakdown ?? true)
@@ -32,9 +42,77 @@ const { receiptFooter, sectorLabels, sectorDisclaimer } = useMeetcostConfig()
 const toast = useToast()
 const copySuccess = ref<'markdown' | 'plain' | null>(null)
 
+const showAdjustDuration = ref(false)
+const adjustMinutes = ref(0)
+const adjustSeconds = ref(0)
+const adjustContainerRef = ref<HTMLElement | null>(null)
+
+function openAdjustDuration() {
+  const d = props.meeting.duration
+  adjustMinutes.value = Math.floor(d / 60)
+  adjustSeconds.value = d % 60
+  showAdjustDuration.value = true
+}
+
+function applyDurationAdjustment() {
+  const newDurationSeconds = Math.max(0, adjustMinutes.value * 60 + adjustSeconds.value)
+  const updated = buildMeeting(
+    props.meeting.participants,
+    newDurationSeconds,
+    props.meeting.timestamp,
+    props.meeting.sectorType,
+    props.meeting.meetingDescription
+  )
+  updated.id = props.meeting.id
+  updateMeeting(props.meeting.id, updated)
+  emit('update:meeting', updated)
+  emit('update:preview', null)
+  showAdjustDuration.value = false
+  toast.add({ title: 'Duration updated', color: 'success', icon: 'i-lucide-check' })
+}
+
+function onAdjustFocusOut(e: FocusEvent) {
+  if (!showAdjustDuration.value) return
+  const container = adjustContainerRef.value
+  if (!container) return
+  const next = e.relatedTarget as Node | null
+  if (next && container.contains(next)) return
+  applyDurationAdjustment()
+}
+
+const adjustedDurationSeconds = computed(() =>
+  Math.max(0, adjustMinutes.value * 60 + adjustSeconds.value)
+)
+
+const displayDuration = computed(() =>
+  showAdjustDuration.value
+    ? formatDuration(adjustedDurationSeconds.value)
+    : formatDuration(props.meeting.duration)
+)
+
+const displayTotalCost = computed(() =>
+  showAdjustDuration.value
+    ? props.meeting.costPerSecond * adjustedDurationSeconds.value
+    : props.meeting.totalCost
+)
+
+watch(
+  [showAdjustDuration, adjustedDurationSeconds, displayTotalCost],
+  () => {
+    if (showAdjustDuration.value) {
+      emit('update:preview', {
+        meetingId: props.meeting.id,
+        durationSeconds: adjustedDurationSeconds.value,
+        totalCost: displayTotalCost.value,
+      })
+    }
+  },
+  { immediate: true }
+)
+
 const duration = computed(() => formatDuration(props.meeting.duration))
 const breakdown = computed(() => getParticipantBreakdown(props.meeting.participants))
-const comparisons = computed(() => generateComparisonList(props.meeting.totalCost))
+const comparisons = computed(() => generateComparisonList(displayTotalCost.value))
 
 const breakdownLines = computed(() => {
   const lines: string[] = []
@@ -116,14 +194,62 @@ async function downloadPDF() {
         <div>
           <p class="text-sm font-medium text-muted">DURATION</p>
           <p class="text-xl font-bold">
-            {{ duration.readable }}
+            {{ displayDuration.readable }}
             <span class="text-base font-normal text-muted">
-              ({{ duration.totalSeconds >= 60
-                ? duration.totalMinutes + ' minute' + (duration.totalMinutes !== 1 ? 's' : '')
-                : duration.totalSeconds + ' second' + (duration.totalSeconds !== 1 ? 's' : '')
+              ({{ displayDuration.totalSeconds >= 60
+                ? displayDuration.totalMinutes + ' minute' + (displayDuration.totalMinutes !== 1 ? 's' : '')
+                : displayDuration.totalSeconds + ' second' + (displayDuration.totalSeconds !== 1 ? 's' : '')
               }})
             </span>
           </p>
+          <div class="mt-2">
+            <button
+              v-if="!showAdjustDuration"
+              type="button"
+              class="text-xs text-muted hover:text-highlighted underline underline-offset-2"
+              @click="openAdjustDuration"
+            >
+              Forgot to stop? Adjust duration
+            </button>
+            <div
+              v-else
+              ref="adjustContainerRef"
+              class="mt-2 flex flex-wrap items-center gap-2"
+              @focusout="onAdjustFocusOut"
+            >
+              <UInputNumber
+                v-model="adjustMinutes"
+                placeholder="Min"
+                :min="0"
+                :max="999"
+                size="sm"
+                class="w-20"
+                aria-label="Minutes"
+              />
+              <span class="text-sm text-muted">min</span>
+              <UInputNumber
+                v-model="adjustSeconds"
+                placeholder="Sec"
+                :min="0"
+                :max="59"
+                size="sm"
+                class="w-20"
+                aria-label="Seconds"
+              />
+              <span class="text-sm text-muted">sec</span>
+              <UButton size="sm" color="primary" variant="soft" @click="applyDurationAdjustment">
+                Apply
+              </UButton>
+              <UButton
+                size="sm"
+                color="neutral"
+                variant="ghost"
+                @click="() => { emit('update:preview', null); showAdjustDuration = false }"
+              >
+                Cancel
+              </UButton>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -152,7 +278,7 @@ async function downloadPDF() {
       <div class="border-t border-default pt-6 mb-6">
         <p class="text-sm font-medium text-muted mb-1">TOTAL COST</p>
         <p class="text-4xl font-bold text-error">
-          {{ formatCurrency(meeting.totalCost) }}
+          {{ formatCurrency(displayTotalCost) }}
         </p>
         <p class="text-xs text-muted mt-1">
           (Sum of hourly rates × duration in seconds) ÷ 3,600 sec/hr
@@ -167,7 +293,7 @@ async function downloadPDF() {
       </div>
 
       <div class="mb-6 text-sm text-muted">
-        <p><strong>If repeated weekly:</strong> Annual cost: {{ formatCurrency(meeting.totalCost * 52) }}</p>
+        <p><strong>If repeated weekly:</strong> Annual cost: {{ formatCurrency(displayTotalCost * 52) }}</p>
         <p class="mt-1">
           Per-minute: {{ formatCurrency(meeting.costPerMinute) }}/min •
           Per-second: {{ formatCurrency(meeting.costPerSecond) }}/sec

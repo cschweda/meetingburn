@@ -28,6 +28,15 @@ export function useMeetingHistory() {
     }
   }
 
+  function updateMeeting(id: string, updated: Meeting): boolean {
+    const idx = meetings.value.findIndex((m) => m.id === id)
+    if (idx === -1) return false
+    const next = [...meetings.value]
+    next[idx] = updated
+    meetings.value = next
+    return true
+  }
+
   function clearHistory() {
     meetings.value = []
   }
@@ -35,6 +44,7 @@ export function useMeetingHistory() {
   return {
     meetings,
     addMeeting,
+    updateMeeting,
     clearHistory,
   }
 }

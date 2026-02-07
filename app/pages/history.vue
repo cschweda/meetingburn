@@ -17,6 +17,33 @@ function sanitizedMeetingDescription(meeting: Meeting): string {
 const { sectorLabels } = useMeetcostConfig()
 const toast = useToast()
 const expandedId = ref<string | null>(null)
+const previewByMeetingId = ref<Record<string, { durationSeconds: number; totalCost: number }>>({})
+
+function onPreviewUpdate(
+  meetingId: string,
+  payload: { meetingId: string; durationSeconds: number; totalCost: number } | null
+) {
+  if (!payload) {
+    const next = { ...previewByMeetingId.value }
+    delete next[meetingId]
+    previewByMeetingId.value = next
+  } else {
+    previewByMeetingId.value = {
+      ...previewByMeetingId.value,
+      [meetingId]: { durationSeconds: payload.durationSeconds, totalCost: payload.totalCost },
+    }
+  }
+}
+
+function displayDurationForMeeting(meeting: Meeting) {
+  const preview = previewByMeetingId.value[meeting.id]
+  return formatDuration(preview ? preview.durationSeconds : meeting.duration)
+}
+
+function displayCostForMeeting(meeting: Meeting) {
+  const preview = previewByMeetingId.value[meeting.id]
+  return formatCurrency(preview ? preview.totalCost : meeting.totalCost)
+}
 
 function toggleExpanded(meeting: Meeting) {
   expandedId.value = expandedId.value === meeting.id ? null : meeting.id
@@ -91,10 +118,10 @@ function handleClearHistory() {
             </div>
             <div class="flex items-center gap-4 shrink-0">
               <span class="text-sm text-muted">
-                {{ formatDuration(meeting.duration).readable }}
+                {{ displayDurationForMeeting(meeting).readable }}
               </span>
               <span class="font-bold text-error">
-                {{ formatCurrency(meeting.totalCost) }}
+                {{ displayCostForMeeting(meeting) }}
               </span>
               <UIcon
                 :name="expandedId === meeting.id ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
@@ -108,7 +135,10 @@ function handleClearHistory() {
             v-show="expandedId === meeting.id"
             class="border-t border-default bg-muted/20"
           >
-            <CalculatorReceipt :meeting="meeting" />
+            <CalculatorReceipt
+              :meeting="meeting"
+              @update:preview="(p) => onPreviewUpdate(meeting.id, p)"
+            />
           </div>
         </li>
       </ul>

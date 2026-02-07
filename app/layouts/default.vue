@@ -9,7 +9,7 @@ const { appName, receiptFooter } = useMeetcostConfig()
         <NuxtLink
           to="/"
           class="hover:opacity-80 transition-opacity"
-          @click="() => window.scrollTo(0, 0)"
+          @click="() => { if (typeof window !== 'undefined') window.scrollTo(0, 0) }"
         >
           <span class="text-6xl md:text-8xl font-bold font-sans text-primary tracking-tight block">
             {{ appName }}
