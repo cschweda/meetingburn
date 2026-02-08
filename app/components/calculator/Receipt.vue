@@ -6,7 +6,10 @@ import { useReceipt } from '~/composables/useReceipt'
 import { useCalculator } from '~/composables/useCalculator'
 import { useMeetingHistory } from '~/composables/useMeetingHistory'
 import { useShareReceipt } from '~/composables/useShareReceipt'
+import { usePresets } from '~/composables/usePresets'
 import { sanitizeString } from '~/utils/sanitize'
+
+const { PRESETS } = usePresets()
 
 const props = defineProps<{
   meeting: Meeting
@@ -28,6 +31,12 @@ const showBreakdown = computed(() => props.showBreakdown ?? true)
 const sanitizedMeetingDescription = computed(() =>
   props.meeting.meetingDescription ? sanitizeString(props.meeting.meetingDescription, 200) : ''
 )
+
+const presetLabel = computed(() => {
+  const pt = props.meeting.preset
+  if (!pt || pt === 'custom') return undefined
+  return PRESETS[pt]?.label
+})
 
 const {
   generateMarkdown,
@@ -65,7 +74,12 @@ function applyDurationAdjustment() {
     newDurationSeconds,
     props.meeting.timestamp,
     undefined,
-    props.meeting.meetingDescription
+    props.meeting.meetingDescription,
+    props.meeting.preset,
+    props.meeting.format,
+    props.meeting.format === 'in-person' && (props.meeting.inPersonCost ?? 0) > 0,
+    props.meeting.commuteMinutesPerPerson,
+    props.meeting.inPersonExtrasPerPerson
   )
   updated.id = props.meeting.id
   updateMeeting(props.meeting.id, updated)
@@ -94,10 +108,24 @@ const displayDuration = computed(() =>
     : formatDuration(props.meeting.duration)
 )
 
-const displayTotalCost = computed(() =>
+const baseMeetingCost = computed(() =>
   showAdjustDuration.value
     ? props.meeting.costPerSecond * adjustedDurationSeconds.value
-    : props.meeting.totalCost
+    : (props.meeting.meetingCost ?? props.meeting.totalCost)
+)
+
+const displayInPersonCost = computed(() =>
+  props.meeting.inPersonCost ?? 0
+)
+
+const inPersonCostPerPerson = computed(() => {
+  const total = displayInPersonCost.value
+  const n = props.meeting.participants?.length || 1
+  return total / n
+})
+
+const displayTotalCost = computed(() =>
+  baseMeetingCost.value + displayInPersonCost.value
 )
 
 watch(
@@ -220,6 +248,12 @@ async function copyShareLink() {
         Meeting Receipt
       </h2>
 
+      <p v-if="presetLabel" class="text-sm font-medium text-muted mb-1">
+        {{ presetLabel }}
+      </p>
+      <p v-if="meeting.format" class="text-sm font-medium text-muted mb-1">
+        {{ meeting.format === 'in-person' ? 'In-person' : 'Remote' }}
+      </p>
       <p v-if="sanitizedMeetingDescription" class="text-lg font-medium text-highlighted mb-2">
         {{ sanitizedMeetingDescription }}
       </p>
@@ -317,7 +351,12 @@ async function copyShareLink() {
         <p class="text-4xl font-bold text-error">
           {{ formatCurrency(displayTotalCost) }}
         </p>
-        <p class="text-xs text-muted mt-1">
+        <div v-if="displayInPersonCost > 0" class="mt-2 text-sm space-y-1">
+          <p class="text-muted"><strong class="text-foreground">Company pays:</strong> {{ formatCurrency(baseMeetingCost) }} (meeting time)</p>
+          <p class="text-muted"><strong class="text-foreground">Each employee pays (avg):</strong> {{ formatCurrency(inPersonCostPerPerson) }} (commute, coffee, parking, etc.—not exact; costs vary per person)</p>
+          <p class="text-muted"><strong class="text-foreground">All employees together pay:</strong> {{ formatCurrency(displayInPersonCost) }}</p>
+        </div>
+        <p v-else class="text-xs text-muted mt-1">
           (Sum of hourly rates × duration in seconds) ÷ 3,600 sec/hr
         </p>
       </div>

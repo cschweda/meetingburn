@@ -11,14 +11,28 @@ const emit = defineEmits<{
 const { PRESETS, createParticipantsFromPreset } = usePresets()
 const numberOfPeople = ref(3)
 const presetOrder: (Exclude<PresetType, 'custom'>)[] = [
-  'tech',
-  'consulting',
-  'government',
-  'corporate',
   'agency',
-  'startup',
+  'consulting',
+  'construction',
+  'corporate',
+  'education',
+  'energy',
+  'finance',
+  'government',
   'healthcare',
+  'insurance',
+  'legal',
+  'manufacturing',
+  'media',
   'nonprofit',
+  'other',
+  'pharma',
+  'realEstate',
+  'retail',
+  'influencer',
+  'startup',
+  'tech',
+  'vibeCoder',
 ]
 
 const presetItems = computed(() =>
@@ -34,21 +48,26 @@ const presetColorMap: Record<string, 'primary' | 'secondary' | 'success' | 'warn
   pink: 'warning',
   red: 'error',
   orange: 'warning',
+  indigo: 'primary',
+  emerald: 'success',
+  amber: 'warning',
+  cyan: 'success',
 }
 
-const selectedPreset = ref<Exclude<PresetType, 'custom'> | null>('tech')
+const selectedPreset = ref<Exclude<PresetType, 'custom'> | null>(null)
 
 function applyPreset(presetType: Exclude<PresetType, 'custom'>) {
   selectedPreset.value = presetType
   const preset = PRESETS[presetType]
-  const count = Math.max(2, Math.min(50, numberOfPeople.value))
+  const count = Math.max(2, Math.min(100, numberOfPeople.value))
   const configs = createParticipantsFromPreset(preset, count)
   emit('select', configs, presetType)
 }
 
-// Apply default preset on mount
-onMounted(() => {
-  applyPreset('tech')
+watch(numberOfPeople, () => {
+  if (selectedPreset.value) {
+    applyPreset(selectedPreset.value)
+  }
 })
 </script>
 
@@ -59,14 +78,14 @@ onMounted(() => {
         Quick setup with industry preset
       </h3>
       <p class="text-sm text-muted">
-        Based on 2026 US salary trends. You can customize each participant after selecting a preset.
+        Based on 2026 US salary trends. Select an industry preset. For 10 or fewer participants, you can optionally adjust individual salaries. These are averages and may be lower than expected for senior roles or high-cost regions.
       </p>
     </div>
     <UFormField label="Number of people" size="lg">
       <UInputNumber
         v-model="numberOfPeople"
         :min="2"
-        :max="50"
+        :max="100"
         placeholder="3"
         size="lg"
         class="max-w-32"

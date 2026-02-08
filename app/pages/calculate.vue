@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import type { Meeting, Participant } from '~/types'
+import type { Meeting, MeetingFormat, Participant, PresetType } from '~/types'
 import { useCalculator } from '~/composables/useCalculator'
+import { usePresets } from '~/composables/usePresets'
 
 definePageMeta({
   layout: 'default',
 })
 
 const { buildMeeting } = useCalculator()
+const { PRESETS } = usePresets()
 
 type View = 'setup' | 'running' | 'receipt'
 
@@ -14,15 +16,39 @@ const view = ref<View>('setup')
 const participants = ref<Participant[]>([])
 const { defaultMeetingType } = useMeetingBurnConfig()
 const meetingDescription = ref<string>(defaultMeetingType)
+const presetType = ref<PresetType | undefined>(undefined)
+const meetingFormat = ref<MeetingFormat>('remote')
+const applyInPersonTax = ref(false)
+const commuteMinutesPerPerson = ref(30)
+const inPersonExtrasPerPerson = ref(0)
 const startTime = ref(0)
 const isPaused = ref(false)
 const completedMeeting = ref<Meeting | null>(null)
 
+const presetLabel = computed(() => {
+  const pt = presetType.value
+  if (!pt || pt === 'custom') return undefined
+  return PRESETS[pt]?.label
+})
+
 const isRunning = computed(() => view.value === 'running')
 
-function handleStart(newParticipants: Participant[], newMeetingDescription: string) {
+function handleStart(
+  newParticipants: Participant[],
+  newMeetingDescription: string,
+  newPreset?: PresetType,
+  newFormat?: MeetingFormat,
+  newApplyInPersonTax?: boolean,
+  newCommuteMinutes?: number,
+  newInPersonExtras?: number
+) {
   participants.value = newParticipants
   meetingDescription.value = newMeetingDescription
+  presetType.value = newPreset
+  meetingFormat.value = newFormat ?? 'remote'
+  applyInPersonTax.value = newApplyInPersonTax ?? false
+  commuteMinutesPerPerson.value = newCommuteMinutes ?? 30
+  inPersonExtrasPerPerson.value = newInPersonExtras ?? 0
   startTime.value = Date.now()
   view.value = 'running'
 }
@@ -45,7 +71,12 @@ function handleStop() {
     elapsedSeconds,
     startTime.value,
     undefined,
-    meetingDescription.value
+    meetingDescription.value,
+    presetType.value,
+    meetingFormat.value,
+    meetingFormat.value === 'in-person' ? applyInPersonTax.value : undefined,
+    meetingFormat.value === 'in-person' ? commuteMinutesPerPerson.value : undefined,
+    meetingFormat.value === 'in-person' ? inPersonExtrasPerPerson.value : undefined
   )
   completedMeeting.value = meeting
   const result = addMeeting(meeting)
@@ -58,6 +89,12 @@ function handleStop() {
 function handleNewMeeting() {
   view.value = 'setup'
   participants.value = []
+  meetingDescription.value = defaultMeetingType
+  presetType.value = undefined
+  meetingFormat.value = 'remote'
+  applyInPersonTax.value = false
+  commuteMinutesPerPerson.value = 30
+  inPersonExtrasPerPerson.value = 0
   startTime.value = 0
   isPaused.value = false
   completedMeeting.value = null
@@ -79,6 +116,11 @@ function handleNewMeeting() {
       <CalculatorLiveCounter
         :participants="participants"
         :meeting-type="meetingDescription"
+        :preset-label="presetLabel"
+        :format="meetingFormat"
+        :apply-in-person-tax="applyInPersonTax"
+        :commute-minutes-per-person="commuteMinutesPerPerson"
+        :in-person-extras-per-person="inPersonExtrasPerPerson"
         :is-running="isRunning"
         :is-paused="isPaused"
         :start-time="startTime"

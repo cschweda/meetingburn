@@ -61,6 +61,11 @@ ${breakdownLines.join('\n')}
 ---
 
 ## Total Cost: ${formatCurrency(meeting.totalCost)}
+${(meeting.inPersonCost ?? 0) > 0 ? `
+- **Company pays:** ${formatCurrency(meeting.meetingCost ?? meeting.totalCost)} (meeting time)
+- **Each employee pays (avg):** ${formatCurrency((meeting.inPersonCost ?? 0) / (meeting.participants?.length || 1))} (commute, coffee, parking, etc.—not exact; costs vary per person)
+- **All employees together pay:** ${formatCurrency(meeting.inPersonCost)}
+` : ''}
 
 ---
 
@@ -113,6 +118,11 @@ Average Rate: ${formatCurrency(meeting.averageRate)}/hour
 ----------------------------------------
 
 TOTAL COST: ${formatCurrency(meeting.totalCost)}
+${(meeting.inPersonCost ?? 0) > 0 ? `
+- Company pays: ${formatCurrency(meeting.meetingCost ?? meeting.totalCost)} (meeting time)
+- Each employee pays (avg): ${formatCurrency((meeting.inPersonCost ?? 0) / (meeting.participants?.length || 1))} (commute, coffee, parking, etc.—not exact; costs vary per person)
+- All employees together pay: ${formatCurrency(meeting.inPersonCost)}
+` : ''}
 
 ----------------------------------------
 
@@ -215,6 +225,12 @@ ${meeting.sectorType === 'public' ? meetingburnConfig.sectorDisclaimer + '\n\n' 
     addLine(`Average Rate: ${formatCurrency(meeting.averageRate)}/hour`)
     y += 5
     addLine(`TOTAL COST: ${formatCurrency(meeting.totalCost)}`, true)
+    if ((meeting.inPersonCost ?? 0) > 0) {
+      const n = meeting.participants?.length || 1
+      addLine(`  Company pays: ${formatCurrency(meeting.meetingCost ?? meeting.totalCost)} (meeting time)`)
+      addLine(`  Each employee pays (avg): ${formatCurrency((meeting.inPersonCost ?? 0) / n)} (commute, coffee, parking, etc.—not exact; costs vary per person)`)
+      addLine(`  All employees together pay: ${formatCurrency(meeting.inPersonCost)}`)
+    }
     y += 5
     addLine('This meeting cost the same as:')
     comparisons.forEach((c) => addLine(`  - ${c}`))
@@ -286,7 +302,18 @@ ${meeting.sectorType === 'public' ? meetingburnConfig.sectorDisclaimer + '\n\n' 
     ctx.font = 'bold 32px system-ui, sans-serif'
     ctx.fillStyle = '#ef4444' // red-500 for emphasis
     ctx.fillText(`TOTAL COST: ${formatCurrency(meeting.totalCost)}`, 40, y)
-    y += 50
+    y += 36
+    if ((meeting.inPersonCost ?? 0) > 0) {
+      const n = meeting.participants?.length || 1
+      ctx.font = '14px system-ui, sans-serif'
+      ctx.fillStyle = '#94a3b8'
+      ctx.fillText(`Company pays: ${formatCurrency(meeting.meetingCost ?? meeting.totalCost)} (meeting time)`, 40, y)
+      y += 20
+      ctx.fillText(`Each employee pays (avg): ${formatCurrency((meeting.inPersonCost ?? 0) / n)} (commute, coffee, parking, etc.—not exact; costs vary per person)`, 40, y)
+      y += 20
+      ctx.fillText(`All employees together pay: ${formatCurrency(meeting.inPersonCost)}`, 40, y)
+      y += 24
+    }
     
     // Comparisons section
     ctx.font = '14px system-ui, sans-serif'

@@ -10,18 +10,23 @@ function formatCostPerSecond(value: number): string {
     maximumFractionDigits: 3,
   }).format(value)
 }
-import type { Participant } from '~/types'
-import { getAverageHourlyRate, getCostPerSecond } from '~/utils/calculations'
+import type { MeetingFormat, Participant } from '~/types'
+import { calculateInPersonCost, getAverageHourlyRate, getCostPerSecond } from '~/utils/calculations'
 
 const props = withDefaults(
   defineProps<{
     participants: Participant[]
     meetingType?: string
+    presetLabel?: string
+    format?: MeetingFormat
+    applyInPersonTax?: boolean
+    commuteMinutesPerPerson?: number
+    inPersonExtrasPerPerson?: number
     isRunning: boolean
     isPaused: boolean
     startTime: number
   }>(),
-  { meetingType: 'General' }
+  { meetingType: 'General', format: 'remote', commuteMinutesPerPerson: 30, inPersonExtrasPerPerson: 0 }
 )
 
 const emit = defineEmits<{
@@ -57,9 +62,24 @@ const displaySeconds = computed(() => {
   return elapsedSeconds.value
 })
 
-const currentCost = computed(() => {
-  return costPerSecond.value * displaySeconds.value
+const meetingCost = computed(() => costPerSecond.value * displaySeconds.value)
+
+const inPersonCost = computed(() => {
+  if (props.format !== 'in-person' || !props.applyInPersonTax || !props.commuteMinutesPerPerson) return 0
+  return calculateInPersonCost(
+    props.participants,
+    props.commuteMinutesPerPerson,
+    props.inPersonExtrasPerPerson ?? 0
+  )
 })
+
+const inPersonCostPerPerson = computed(() => {
+  const total = inPersonCost.value
+  const n = activeParticipantCount.value || 1
+  return total / n
+})
+
+const currentCost = computed(() => meetingCost.value + inPersonCost.value)
 
 const costThresholdClass = computed(() => {
   const cost = currentCost.value
@@ -142,14 +162,28 @@ const startTimeFormatted = computed(() => {
       {{ formatCurrency(currentCost) }}
     </p>
 
+    <div v-if="format === 'in-person' && inPersonCost > 0" class="mt-2 text-lg text-muted space-y-1 text-center">
+      <p>Meeting: {{ formatCurrency(meetingCost) }} <span class="text-sm">(starts at $0)</span></p>
+      <p>+ In-person: {{ formatCurrency(inPersonCost) }} total <span class="text-sm">({{ formatCurrency(inPersonCostPerPerson) }} avg per employee—not exact)</span></p>
+      <p class="font-semibold text-foreground">= Total: {{ formatCurrency(currentCost) }}</p>
+    </div>
+
     <p class="text-2xl md:text-4xl font-bold text-muted mt-4">
       +{{ formatCostPerSecond(costPerSecond) }} per second
     </p>
 
     <div class="mt-8 flex flex-col items-center gap-2 text-xl text-muted font-medium">
+      <span v-if="presetLabel" class="flex items-center gap-2">
+        <UIcon name="i-lucide-layers" class="size-5" aria-hidden="true" />
+        {{ presetLabel }}
+      </span>
       <span class="flex items-center gap-2">
         <UIcon name="i-lucide-layout-list" class="size-5" aria-hidden="true" />
         {{ meetingType }}
+      </span>
+      <span class="flex items-center gap-2">
+        <UIcon name="i-lucide-map-pin" class="size-5" aria-hidden="true" />
+        {{ format === 'in-person' ? 'In-person' : 'Remote' }}
       </span>
       <span class="flex items-center gap-2">
         <UIcon name="i-lucide-users" class="size-5" aria-hidden="true" />

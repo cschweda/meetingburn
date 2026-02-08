@@ -1,6 +1,7 @@
-import type { Meeting, Participant, SectorType } from '~/types'
+import type { Meeting, MeetingFormat, Participant, PresetType, SectorType } from '~/types'
 import {
   calculateEffectiveHourlyRate,
+  calculateInPersonCost,
   calculateMeetingCost,
   getCostPerSecond,
 } from '~/utils/calculations'
@@ -37,10 +38,26 @@ export function useCalculator() {
     durationSeconds: number,
     startTimestamp: number,
     sectorType?: SectorType,
-    meetingDescription?: string
+    meetingDescription?: string,
+    preset?: PresetType,
+    format?: MeetingFormat,
+    applyInPersonTax?: boolean,
+    commuteMinutesPerPerson?: number,
+    inPersonExtrasPerPerson?: number
   ): Meeting => {
-    const { cost } = calculateMeetingCost(participants, durationSeconds)
+    const { cost: meetingCost } = calculateMeetingCost(participants, durationSeconds)
     const costPerSecond = getCostPerSecond(participants)
+
+    let inPersonCost: number | undefined
+    if (format === 'in-person' && applyInPersonTax && commuteMinutesPerPerson != null && commuteMinutesPerPerson > 0) {
+      inPersonCost = calculateInPersonCost(
+        participants,
+        commuteMinutesPerPerson,
+        inPersonExtrasPerPerson ?? 0
+      )
+    }
+
+    const totalCost = meetingCost + (inPersonCost ?? 0)
 
     const sanitizedParticipants = participants.map((p) => ({
       ...p,
@@ -52,7 +69,9 @@ export function useCalculator() {
       timestamp: startTimestamp,
       duration: durationSeconds,
       participants: sanitizedParticipants,
-      totalCost: cost,
+      totalCost,
+      meetingCost,
+      inPersonCost,
       costPerSecond,
       costPerMinute: costPerSecond * 60,
       averageRate:
@@ -63,6 +82,10 @@ export function useCalculator() {
       meetingDescription: meetingDescription
         ? sanitizeString(meetingDescription, 200)
         : undefined,
+      preset,
+      format,
+      commuteMinutesPerPerson: format === 'in-person' ? commuteMinutesPerPerson : undefined,
+      inPersonExtrasPerPerson: format === 'in-person' ? inPersonExtrasPerPerson : undefined,
     }
   }
 

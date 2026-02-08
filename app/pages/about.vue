@@ -63,6 +63,23 @@ useSeoMeta({
         Total cost = (sum of all hourly rates) × (duration in seconds) ÷ 3,600. The cost per second is the sum of hourly rates ÷ 3,600; multiply by elapsed seconds to get the total.
       </p>
 
+      <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
+        In-person “tax” (usually paid by employees)
+      </h3>
+      <p class="text-muted leading-relaxed mb-2">
+        In-person meetings add hidden costs that most companies don’t cover: commute time, coffee, parking, childcare, etc. These are typically paid by employees, not the employer.
+      </p>
+      <p class="text-muted leading-relaxed mb-2">
+        When you choose “In-person” and include this cost, we add:
+      </p>
+      <ul class="text-muted leading-relaxed mb-4 list-disc list-inside space-y-1">
+        <li><strong class="text-highlighted">Included by default—commute time value:</strong> The dollar value of time spent commuting. Formula: sum of hourly rates × (round-trip minutes ÷ 60). Default is 30 minutes.</li>
+        <li><strong class="text-highlighted">Extra cost (optional):</strong> Out-of-pocket expenses beyond commute time, e.g. coffee, parking, childcare, tolls. Add a per-person dollar amount if applicable.</li>
+      </ul>
+      <p class="text-muted leading-relaxed mb-6">
+        The receipt itemizes <strong>Company pays</strong> (meeting time) vs <strong>Each employee pays (avg)</strong> (per-person average—not exact; commute, daycare, coffee, etc. vary) and <strong>All employees together pay</strong> (total), so it’s clear who bears which cost.
+      </p>
+
       <p class="text-muted leading-relaxed mb-6">
         <strong>Examples:</strong>
       </p>

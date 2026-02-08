@@ -63,3 +63,26 @@ export function getAverageHourlyRate(participants: Participant[]): number | null
   )
   return totalHourlyRate / activeParticipants.length
 }
+
+/**
+ * Compute in-person cost: commute (time × hourly rates) + extras per person.
+ * Commute cost = totalHourlyRate × (commuteMinutes / 60) × participants
+ * Extras cost = extrasPerPerson × participants
+ */
+export function calculateInPersonCost(
+  participants: Participant[],
+  commuteMinutesPerPerson: number,
+  extrasPerPerson = 0
+): number {
+  const activeParticipants = participants.filter((p) => p.isActive)
+  if (activeParticipants.length === 0) return 0
+
+  const totalHourlyRate = activeParticipants.reduce(
+    (sum, p) => sum + (p.effectiveHourlyRate || 0),
+    0
+  )
+
+  const commuteCost = totalHourlyRate * (commuteMinutesPerPerson / 60)
+  const extrasCost = extrasPerPerson * activeParticipants.length
+  return commuteCost + extrasCost
+}

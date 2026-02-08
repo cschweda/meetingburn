@@ -1,9 +1,12 @@
 export type EmploymentType = 'fulltime' | 'contractor' | 'unknown'
 
-export type PresetType = 'tech' | 'consulting' | 'government' | 'agency' | 'corporate' | 'startup' | 'healthcare' | 'nonprofit' | 'custom'
+export type PresetType = 'tech' | 'consulting' | 'government' | 'agency' | 'corporate' | 'startup' | 'healthcare' | 'nonprofit' | 'legal' | 'finance' | 'manufacturing' | 'retail' | 'other' | 'influencer' | 'vibeCoder' | 'realEstate' | 'construction' | 'education' | 'media' | 'insurance' | 'energy' | 'pharma' | 'custom'
 
 /** Public = taxpayer-funded; private = company/organization dollars */
 export type SectorType = 'public' | 'private'
+
+/** In-person = physical meeting; remote = video/phone */
+export type MeetingFormat = 'in-person' | 'remote'
 
 export interface Participant {
   id: string
@@ -32,6 +35,16 @@ export interface Meeting {
   sectorType?: SectorType
   /** Meeting type/description (e.g. Stand Up, Touch Base) */
   meetingDescription?: string
+  /** In-person or remote. Default: remote */
+  format?: MeetingFormat
+  /** Base meeting cost (duration only). When in-person with tax, totalCost = meetingCost + inPersonCost */
+  meetingCost?: number
+  /** In-person tax: commute + extras. Present when format is in-person and applyInPersonTax */
+  inPersonCost?: number
+  /** Round-trip commute minutes per person (for display) */
+  commuteMinutesPerPerson?: number
+  /** Extra $ per person: coffee, parking, daycare, etc. (for display) */
+  inPersonExtrasPerPerson?: number
 }
 
 export interface Preset {
