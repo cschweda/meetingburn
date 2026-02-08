@@ -166,6 +166,21 @@ meetcost.config.ts           # Single source of truth for app config (filename k
 
 See `netlify.toml` for configuration. Node version matches `.nvmrc` (22.x).
 
+### Security (Netlify)
+
+The `netlify.toml` applies security headers to all responses:
+
+| Header | Purpose |
+|--------|---------|
+| `X-Frame-Options: DENY` | Prevents clickjacking |
+| `X-Content-Type-Options: nosniff` | Prevents MIME sniffing |
+| `Referrer-Policy` | Limits referrer leakage; `no-referrer` for `/share` so the `r=` param is never sent as referrer |
+| `Strict-Transport-Security` | Enforces HTTPS (1 year, preload) |
+| `Permissions-Policy` | Disables camera, mic, geolocation, etc. |
+| `Content-Security-Policy` | Restricts script/style/img sources; `'unsafe-inline'` required for Nuxt/Vue hydration |
+
+`X-XSS-Protection` is intentionally omitted (deprecated; CSP is the primary XSS defense). The share page (`/share`) uses `Referrer-Policy: no-referrer` so share links never leak the receipt payload in referrer headers.
+
 ### Other platforms
 
 The app is a static Nuxt build. Deploy the contents of `.output/public` to any static host (Vercel, Cloudflare Pages, etc.). Ensure the Node version matches `.nvmrc` for the build step.
