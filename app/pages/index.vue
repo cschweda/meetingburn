@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { tagline, defaultDescription, appName, siteUrl } = useMeetingBurnConfig()
 useSeoMeta({
-  title: `${appName} - ${tagline}`,
+  title: tagline,
   description: defaultDescription,
   ogImage: `${siteUrl}/og-image.png`,
   twitterCard: 'summary_large_image',

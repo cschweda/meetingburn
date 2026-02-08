@@ -8,7 +8,7 @@ export const meetingburnConfig = {
   appTitle: 'MeetingBurn - Meeting Cost Calculator',
   tagline: 'See the real cost of every meeting',
   defaultDescription:
-    'Free meeting cost calculator. No login required. All computation runs in your browser—your data never leaves your device. Track, analyze, and share the true cost of meetings.',
+    'Free meeting cost calculator. Track, analyze, and share the true cost of meetings. No login required. Privacy-first—your data never leaves your browser.',
   aboutDescription: 'MeetingBurn is a real-time meeting cost calculator that makes meeting waste visible.',
   receiptFooter: 'Tracked with MeetingBurn • meetingburn.app',
   receiptFooterMarkdown: 'Tracked with [MeetingBurn](https://meetingburn.app)',
