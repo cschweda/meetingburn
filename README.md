@@ -28,7 +28,8 @@ MeetingBurn is a real-time meeting cost calculator that makes meeting waste visi
 - **Shareable receipts** — Download as Markdown, TXT, CSV, PDF, or PNG; copy to clipboard
 - **Share link** — Generate URL-encoded receipt links (`/share?r=...`) for sharing
 - **Native share API** — One-tap share to social apps on supported devices (with copy-link fallback)
-- **Duration adjustment** — Forgot to stop? Adjust duration on the receipt; cost updates in real time and auto-saves when focus leaves the adjustment field
+- **Meeting score** — Optional 0–100 efficiency score displayed as a Lighthouse-style gauge. Evaluates format (remote vs. in-person), participant count, duration, meeting type, and in-person costs. Research-backed with citations. Toggled by the user; never shown in shared receipts, downloads, or clipboard copies
+- **Duration adjustment** — Forgot to stop? Adjust duration (hours, minutes, seconds) on the receipt; cost and score update in real time and auto-save when focus leaves the adjustment field
 - **Meeting history** — Meetings saved in local storage (up to 100); adjust duration and view past receipts
 - **Public vs. private sector** — Tag meetings as taxpayer-funded (public) or company dollars (private)
 - **Meeting types** — Quick-select from General, Stand Up, Touch Base, Sprint Planning, and more
@@ -47,7 +48,17 @@ MeetingBurn is a real-time meeting cost calculator that makes meeting waste visi
 - **Meeting cost:** (Sum of all hourly rates) × (duration in seconds) ÷ 3,600
 - **In-person tax (optional):** Commute time value + extras per person (coffee, parking, etc.). Itemized by company vs. employee on the receipt.
 
-See the [About](/about) page for a detailed explanation and examples.
+### Meeting score algorithm
+
+The optional meeting score (0–100) starts at 100 and applies penalties/bonuses based on:
+
+- **Format appropriateness** — In-person meetings are penalized for async-friendly types (standups, status updates); remote is preferred for routine work
+- **Participant count** — Medium (8–14: -5), large (25+: -8), very large (50+: -8), and large in-person gatherings (50+: additional -10)
+- **Duration** — Long durations for status-type meetings are penalized; short standups get a small bonus
+- **In-person costs** — High cost per attendee-hour is penalized for in-person meetings only (reflects actual expenses beyond salary). Remote meetings are NOT penalized for high hourly rates—that's just the cost of time
+- **Total cost** — Very high total costs (>$8K, >$15K) are penalized regardless of format
+
+The scoring algorithm is explained in detail on the [About page](https://meetingburn.app/about#scoring-algorithm), including research citations from Stanford WFH Research, Harvard Business Review, Pew Research, and peer-reviewed journals.
 
 ## Tech stack
 
@@ -82,16 +93,19 @@ yarn test
 
 ### Testing
 
-MeetingBurn is thoroughly tested with **86 unit tests** across 6 suites. Run with `yarn test`. Tests live in `tests/` at the project root, mirroring the `app/` structure.
+MeetingBurn is thoroughly tested with **107 tests** across 9 suites. Run with `yarn test`. Tests live in `tests/` at the project root, mirroring the `app/` structure.
 
 | Suite | Tests | Coverage |
 |-------|-------|----------|
 | **calculations** | 22 | Hourly rates, cost-per-second, meeting cost, in-person cost, edge cases |
 | **formatting** | 15 | Currency, duration, dates, times, elapsed time |
 | **useShareReceipt** | 22 | Privacy, PII protection, share URL generation, PII exclusion |
+| **useMeetingScore** | 11 | Scoring algorithm, format penalties, participant thresholds, grade mapping |
 | **useCalculator** | 8 | Meeting building, remote/in-person, quick-mode participants |
 | **sanitize** | 11 | Input sanitization, XSS prevention |
 | **comparisons** | 8 | Cost-to-item comparisons |
+| **score-duration-adjustment** | 6 | Score updates with duration changes, remote vs. in-person cost logic |
+| **user-scenario** | 4 | End-to-end scoring verification for real-world meeting scenarios |
 
 #### calculations (22 tests)
 
@@ -105,7 +119,7 @@ Display helpers: `formatCurrency` (USD, 2 decimals), `formatHourlyRate`, `format
 
 Share-link privacy and PII protection:
 
-- **PII exclusion** — Excludes individual salaries, hourly rates, participant IDs, names, roles, meeting IDs, and email-like identifiers. Payload has only whitelisted keys (`t`, `d`, `n`, `c`, `a`, `s`, `m`, `f`, `ct`, `un`). No individual `effectiveHourlyRate` values; only aggregated counts and averages.
+- **PII exclusion** — Excludes individual salaries, hourly rates, participant IDs, names, roles, meeting IDs, and email-like identifiers. Payload has only whitelisted keys (`t`, `d`, `n`, `c`, `a`, `s`, `m`, `f`, `ct`, `un`, `fm`, `ip`). No individual `effectiveHourlyRate` values; only aggregated counts and averages. Meeting scores are never included in share payloads.
 - **Round-trip integrity** — Encode/decode preserves only safe, aggregated data. Invalid, corrupted, empty, or malformed base64 payloads return `null`.
 - **URL generation** — Share URLs use base64-safe characters and contain no raw sensitive data. Same meeting yields consistent URLs.
 - **Privacy guarantees** — Full encode/decode cycle leaks no PII. Payload has no `participants` array. URL parameter uses only base64-safe characters.
@@ -124,6 +138,18 @@ Input sanitization for safe display and export: strips HTML tags, angle brackets
 
 Cost-to-item utilities: `generateComparison` returns "0 items" for zero/negative cost and "N item" strings for positive cost. `generateComparisonList` returns up to N items, no duplicates, correct format, and positive quantities.
 
+#### useMeetingScore (11 tests)
+
+Meeting score algorithm: score bounds (0–100 clamping for normal and extreme inputs), grade mapping (A+ through F), format appropriateness (in-person + async-friendly penalized more than remote, remote + async-friendly gets bonus), medium-sized meeting penalty (8–14 people: -5), boundary cases (7/8/14/15 participants), and the Example 7 regression test (75-person 8hr in-person all-hands scores below 55).
+
+#### score-duration-adjustment (6 tests) — Integration
+
+Verifies that meeting scores update correctly when duration is adjusted. Tests duration changes (35 min → 2 hours), long async meeting penalties, hours/minutes/seconds calculation, the user's exact 11-person scenario, multi-hour durations, and that cost-per-person-hour penalties only apply to in-person meetings (not remote).
+
+#### user-scenario (4 tests) — Verification
+
+End-to-end verification of real-world scoring scenarios: 11-person remote General meeting scores 95 (not 100), duration adjustments preserve correct score, hours input calculates correctly, and score factors remain consistent across duration changes.
+
 #### Safe to use
 
 The app is **privacy-first** and **client-only**: your salary data, participant details, and meeting history never leave your device. The test suite verifies that sharing receipts and export flows do not leak PII.
@@ -140,18 +166,24 @@ yarn dev
 
 ```
 app/
-├── components/calculator/   # LiveCounter, SetupForm, Receipt, PresetPicker
-├── composables/             # useCalculator, useReceipt, useShareReceipt, usePresets, useMeetingBurnConfig, useMeetingHistory
+├── components/
+│   ├── calculator/          # LiveCounter, SetupForm, Receipt, PresetPicker
+│   └── MeetingScoreGauge.vue  # Lighthouse-style circular score gauge (SVG)
+├── composables/             # useCalculator, useReceipt, useShareReceipt, usePresets,
+│                            #   useMeetingBurnConfig, useMeetingHistory, useMeetingScore
 ├── layouts/                 # default, calculator
 ├── pages/                   # index, calculate, about, history, share
 ├── types/                   # Meeting, Participant, SectorType, Preset, etc.
 ├── utils/                   # formatting, calculations, comparisons, sanitize
 └── app.vue
 
-tests/                       # Vitest unit tests (86 tests across 6 suites)
-├── composables/             # useCalculator, useShareReceipt
+tests/                       # Vitest tests (107 tests across 9 suites)
+├── composables/             # useCalculator, useShareReceipt, useMeetingScore
+├── integration/             # Score + duration adjustment integration tests
+├── verification/            # End-to-end user scenario verification
 └── utils/                   # calculations, formatting, sanitize, comparisons
 
+documentation/               # Design docs, assessments, implementation notes
 public/                      # Static assets (favicon, screenshots)
 meetingburn.config.ts        # Single source of truth for app config
 ```
