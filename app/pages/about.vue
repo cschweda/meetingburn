@@ -95,7 +95,7 @@ useSeoMeta({
               <UIcon name="i-lucide-users-2" class="size-8" aria-hidden="true" />
             </div>
             <div class="min-w-0 flex-1">
-              <h4 class="text-lg font-semibold text-highlighted mb-2">Example 1: The 30‑minute sync</h4>
+              <h4 class="text-lg font-semibold text-highlighted mb-2">Example 1: The 30‑minute sync (Remote)</h4>
               <p class="text-muted text-sm mb-4">
                 3 people at $90K/year → 3 × ($90,000 ÷ 2,080) = $129.81/hr. Thirty minutes: $129.81 × 0.5 = <strong class="text-highlighted">$64.90</strong>.
               </p>
@@ -119,7 +119,7 @@ useSeoMeta({
               <UIcon name="i-lucide-repeat" class="size-8" aria-hidden="true" />
             </div>
             <div class="min-w-0 flex-1">
-              <h4 class="text-lg font-semibold text-highlighted mb-2">Example 2: The recurring meeting drain</h4>
+              <h4 class="text-lg font-semibold text-highlighted mb-2">Example 2: The recurring meeting drain (Remote)</h4>
               <p class="text-muted text-sm mb-4">
                 6-person team (avg $100K/year), 1-hour weekly sync. Per meeting: 6 × ($100,000 ÷ 2,080) × 1 = <strong class="text-highlighted">$288</strong>. Over 52 weeks: <strong class="text-highlighted">~$15,000/year</strong>.
               </p>
@@ -149,9 +149,9 @@ useSeoMeta({
               <UIcon name="i-lucide-users" class="size-8" aria-hidden="true" />
             </div>
             <div class="min-w-0 flex-1">
-              <h4 class="text-lg font-semibold text-highlighted mb-2">Example 3: Unit meeting with 15 attendees</h4>
+              <h4 class="text-lg font-semibold text-highlighted mb-2">Example 3: Unit meeting with 15 attendees (In-person)</h4>
               <p class="text-muted text-sm mb-4">
-                15 people (avg $95K/year), 1-hour unit meeting. 15 × ($95,000 ÷ 2,080) × 1 = <strong class="text-highlighted">$685</strong>.
+                15 people (avg $95K/year), 1-hour in-person unit meeting. <strong class="text-highlighted">Meeting cost:</strong> 15 × ($95,000 ÷ 2,080) × 1 = $685. <strong class="text-highlighted">In-person tax</strong> (30 min commute, $15/person for coffee/parking): commute = $685 × (30÷60) = $343; extras = 15 × $15 = $225; in-person total = $568. <strong class="text-highlighted">Total:</strong> $685 + $568 = <strong class="text-highlighted">$1,253</strong> (company pays $685; employees pay $568).
               </p>
               <div class="rounded-lg bg-default/50 p-4 text-sm">
                 <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
@@ -173,7 +173,7 @@ useSeoMeta({
               <UIcon name="i-lucide-landmark" class="size-8" aria-hidden="true" />
             </div>
             <div class="min-w-0 flex-1">
-              <h4 class="text-lg font-semibold text-highlighted mb-2">Example 4: Public agency quarterly full-day retreat</h4>
+              <h4 class="text-lg font-semibold text-highlighted mb-2">Example 4: Public agency quarterly full-day retreat (Remote)</h4>
               <p class="text-muted text-sm mb-4">
                 75 people (avg $70K/year, blended public-sector rate), 8am–4:30pm with 1 hour for lunch = 7.5 hours. At 8am: <strong class="text-highlighted">$0</strong>. At 4:30pm: 75 × ($70,000 ÷ 2,080) × 7.5 = <strong class="text-highlighted">~$18,900</strong> per meeting. Quarterly = 4× per year: <strong class="text-highlighted">~$75,600</strong> annually. <em>Taxpayer dollars.</em>
               </p>
@@ -204,7 +204,7 @@ useSeoMeta({
               <UIcon name="i-lucide-sunrise" class="size-8" aria-hidden="true" />
             </div>
             <div class="min-w-0 flex-1">
-              <h4 class="text-lg font-semibold text-highlighted mb-2">Example 5: 15-minute daily standup</h4>
+              <h4 class="text-lg font-semibold text-highlighted mb-2">Example 5: 15-minute daily standup (Remote)</h4>
               <p class="text-muted text-sm mb-4">
                 5-person team (avg $100K/year), 15-minute daily standup. 5 × ($100,000 ÷ 2,080) × 0.25 = <strong class="text-highlighted">$60</strong> per meeting. Daily = ~260 working days/year: <strong class="text-highlighted">~$15,600/year</strong>.
               </p>
@@ -222,6 +222,29 @@ useSeoMeta({
                   <li>89 hours of consultant time ($175/hr)</li>
                 </ul>
                 <p class="text-muted text-sm mt-2 italic">—Could this have been a Slack or Teams message? Daily standups often could—async updates can be just as effective without disrupting deep work for makers and creatives.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Example 6: In-person with tax -->
+        <div class="rounded-xl border border-default bg-muted/10 p-6 border-l-4 border-l-rose-500">
+          <div class="flex items-start gap-4">
+            <div class="shrink-0 flex items-center justify-center size-14 rounded-xl bg-rose-500/15 text-rose-600 dark:text-rose-400">
+              <UIcon name="i-lucide-map-pin" class="size-8" aria-hidden="true" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <h4 class="text-lg font-semibold text-highlighted mb-2">Example 6: 4-person in-person kickoff (In-person)</h4>
+              <p class="text-muted text-sm mb-4">
+                4 people at $90K/year, 1-hour in-person kickoff. <strong class="text-highlighted">Meeting cost:</strong> 4 × ($90,000 ÷ 2,080) × 1 = $173. <strong class="text-highlighted">In-person tax</strong> (30 min commute, $20/person for coffee/parking): commute = $173 × (30÷60) = $87; extras = 4 × $20 = $80; in-person total = $167. <strong class="text-highlighted">Total:</strong> $173 + $167 = <strong class="text-highlighted">$340</strong> (company pays $173; employees pay $167, ~$42 avg per person).
+              </p>
+              <div class="rounded-lg bg-default/50 p-4 text-sm">
+                <p class="font-medium text-highlighted mb-2">Business equivalent:</p>
+                <ul class="text-muted space-y-1 text-sm list-disc list-inside">
+                  <li>~2 hours of consultant time ($175/hr)</li>
+                  <li>4 enterprise licenses per month ($75 each)</li>
+                </ul>
+                <p class="text-muted text-sm mt-2 italic">—In-person has value for relationship-building. But the hidden employee cost (commute, parking, daycare) is real—often paid out of pocket.</p>
               </div>
             </div>
           </div>
