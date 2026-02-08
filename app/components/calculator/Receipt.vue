@@ -7,9 +7,11 @@ import { useCalculator } from '~/composables/useCalculator'
 import { useMeetingHistory } from '~/composables/useMeetingHistory'
 import { useShareReceipt } from '~/composables/useShareReceipt'
 import { usePresets } from '~/composables/usePresets'
+import { useMeetingScore } from '~/composables/useMeetingScore'
 import { sanitizeString } from '~/utils/sanitize'
 
 const { PRESETS } = usePresets()
+const { computeMeetingScore } = useMeetingScore()
 
 const props = defineProps<{
   meeting: Meeting
@@ -54,21 +56,24 @@ const { getShareUrl, shareNative } = useShareReceipt()
 const { receiptFooter } = useMeetingBurnConfig()
 const toast = useToast()
 const copySuccess = ref<'markdown' | 'plain' | null>(null)
+const showScore = ref(false)
 
 const showAdjustDuration = ref(false)
+const adjustHours = ref(0)
 const adjustMinutes = ref(0)
 const adjustSeconds = ref(0)
 const adjustContainerRef = ref<HTMLElement | null>(null)
 
 function openAdjustDuration() {
   const d = props.meeting.duration
-  adjustMinutes.value = Math.floor(d / 60)
+  adjustHours.value = Math.floor(d / 3600)
+  adjustMinutes.value = Math.floor((d % 3600) / 60)
   adjustSeconds.value = d % 60
   showAdjustDuration.value = true
 }
 
 function applyDurationAdjustment() {
-  const newDurationSeconds = Math.max(0, adjustMinutes.value * 60 + adjustSeconds.value)
+  const newDurationSeconds = Math.max(0, adjustHours.value * 3600 + adjustMinutes.value * 60 + adjustSeconds.value)
   const updated = buildMeeting(
     props.meeting.participants,
     newDurationSeconds,
@@ -99,7 +104,7 @@ function onAdjustFocusOut(e: FocusEvent) {
 }
 
 const adjustedDurationSeconds = computed(() =>
-  Math.max(0, adjustMinutes.value * 60 + adjustSeconds.value)
+  Math.max(0, adjustHours.value * 3600 + adjustMinutes.value * 60 + adjustSeconds.value)
 )
 
 const displayDuration = computed(() =>
@@ -153,6 +158,21 @@ const breakdownLines = computed(() => {
   if (breakdown.value.unknown > 0) lines.push(`${breakdown.value.unknown} unknown/estimated`)
   return lines
 })
+
+const displayDurationSeconds = computed(() =>
+  showAdjustDuration.value ? adjustedDurationSeconds.value : props.meeting.duration
+)
+
+const meetingScore = computed(() =>
+  computeMeetingScore({
+    totalCost: displayTotalCost.value,
+    format: props.meeting.format ?? 'remote',
+    meetingType: props.meeting.meetingDescription,
+    durationSeconds: displayDurationSeconds.value,
+    participantCount: props.meeting.participants.length,
+    inPersonCost: displayInPersonCost.value,
+  })
+)
 
 const timestamp = computed(() =>
   new Date(props.meeting.timestamp).toISOString().replace(/[:.]/g, '-').slice(0, 19)
@@ -241,8 +261,8 @@ async function copyShareLink() {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto p-6" data-test="receipt">
-    <div class="bg-default border border-default rounded-lg p-6 shadow-sm">
+  <div class="max-w-2xl mx-auto p-4 sm:p-6 w-full min-w-0" data-test="receipt">
+    <div class="bg-default border border-default rounded-lg p-4 sm:p-6 shadow-sm">
       <h2 class="text-2xl font-bold text-highlighted mb-4 flex items-center gap-2">
         <UIcon name="i-lucide-receipt" class="size-7" aria-hidden="true" />
         Meeting Receipt
@@ -289,10 +309,20 @@ async function copyShareLink() {
               @focusout="onAdjustFocusOut"
             >
               <UInputNumber
+                v-model="adjustHours"
+                placeholder="Hr"
+                :min="0"
+                :max="99"
+                size="sm"
+                class="w-20"
+                aria-label="Hours"
+              />
+              <span class="text-sm text-muted">hr</span>
+              <UInputNumber
                 v-model="adjustMinutes"
                 placeholder="Min"
                 :min="0"
-                :max="999"
+                :max="59"
                 size="sm"
                 class="w-20"
                 aria-label="Minutes"
@@ -374,6 +404,53 @@ async function copyShareLink() {
           Per-minute: {{ formatCurrency(meeting.costPerMinute) }}/min •
           Per-second: {{ formatCurrency(meeting.costPerSecond) }}/sec
         </p>
+      </div>
+
+      <div class="mb-6">
+        <div v-if="!showScore">
+          <button
+            type="button"
+            class="text-sm text-muted hover:text-highlighted underline underline-offset-2 flex items-center gap-2"
+            @click="showScore = true"
+          >
+            <UIcon name="i-lucide-gauge" class="size-4" aria-hidden="true" />
+            Show meeting score
+          </button>
+        </div>
+        <div
+          v-else
+          class="p-4 rounded-lg border border-default bg-muted/20"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-sm font-medium text-muted">Meeting score</p>
+            <button
+              type="button"
+              class="text-xs text-muted hover:text-highlighted underline underline-offset-2"
+              @click="showScore = false"
+            >
+              Hide
+            </button>
+          </div>
+          <div class="flex flex-wrap items-start gap-6">
+            <MeetingScoreGauge :score="meetingScore.score" :size="140" />
+            <div class="flex flex-col gap-2 min-w-0 flex-1">
+              <p class="text-sm text-muted italic">
+                {{ meetingScore.text }}
+              </p>
+              <div v-if="meetingScore.factors.length" class="mt-1">
+                <p class="text-xs font-medium text-muted mb-1.5">What affected this score:</p>
+                <ul class="text-xs text-muted list-disc list-inside space-y-0.5">
+                  <li v-for="factor in meetingScore.factors" :key="factor">
+                    {{ factor }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs text-muted mt-3">
+            Subjective. Based on format, meeting type, and duration. For in-person meetings, considers actual expenses beyond salary (commute, parking, etc.). For remote meetings, only time/salary is considered—not treated as an expense.
+          </p>
+        </div>
       </div>
 
       <p class="text-xs text-muted mb-6">

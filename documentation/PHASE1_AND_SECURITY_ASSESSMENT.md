@@ -50,7 +50,7 @@
 | Calculator accurately tracks costs | ✅ |
 | Receipt generation works | ✅ |
 | Mobile responsive | ✅ |
-| Deployed at meetcost.app | ✅ (with Netlify config) |
+| Deployed at meetingburn.app | ✅ (with Netlify config) |
 
 ### Beyond Phase 1 (Already Implemented)
 

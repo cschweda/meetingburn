@@ -178,7 +178,7 @@ const inPersonCostPreview = computed(() => {
 </script>
 
 <template>
-  <div class="space-y-6 max-w-2xl mx-auto">
+  <div class="space-y-6 max-w-2xl mx-auto w-full min-w-0">
     <h2 class="text-xl font-semibold text-highlighted">
       Setup Meeting
     </h2>
@@ -317,8 +317,29 @@ const inPersonCostPreview = computed(() => {
 
     <!-- Preset Mode -->
     <div v-if="setupMode === 'preset'" class="border-b border-default pb-6">
+      <UFormField class="mb-8">
+        <template #label>
+          <span class="text-xl font-semibold text-foreground">Number of people</span>
+        </template>
+        <UInputNumber
+          v-model="numberOfPeople"
+          :min="2"
+          :max="100"
+          placeholder="3"
+          size="xl"
+          :ui="{
+            root: 'w-full',
+            base: 'min-h-[100px] text-6xl font-black text-center py-4',
+            increment: '[&_button]:!min-w-20 [&_button]:!min-h-20 [&_button]:!flex [&_button]:!items-center [&_button]:!justify-center [&_svg]:!size-12 [&_svg]:!stroke-[5]',
+            decrement: '[&_button]:!min-w-20 [&_button]:!min-h-20 [&_button]:!flex [&_button]:!items-center [&_button]:!justify-center [&_svg]:!size-12 [&_svg]:!stroke-[5]',
+          }"
+          aria-label="Number of participants for preset"
+          :increment="{ color: 'neutral', variant: 'solid', size: 'xl' }"
+          :decrement="{ color: 'neutral', variant: 'solid', size: 'xl' }"
+        />
+      </UFormField>
       <div class="flex items-center justify-between mb-3">
-        <h3 class="text-lg font-medium text-muted">
+        <h3 class="text-xl font-semibold text-highlighted">
           Select industry preset
         </h3>
         <UButton
@@ -332,6 +353,7 @@ const inPersonCostPreview = computed(() => {
         </UButton>
       </div>
       <CalculatorPresetPicker
+        :number-of-people="numberOfPeople"
         @select="applyPresetConfigs"
       />
 
@@ -353,7 +375,7 @@ const inPersonCostPreview = computed(() => {
         </UButton>
         <div v-else class="space-y-6">
           <div class="flex items-center justify-between">
-            <h3 class="text-lg font-medium text-muted">
+            <h3 class="text-xl font-semibold text-highlighted">
               Participant details
             </h3>
             <UButton
@@ -478,7 +500,7 @@ const inPersonCostPreview = computed(() => {
       </UFormField>
 
       <div class="space-y-6">
-        <h3 class="text-lg font-medium text-muted">
+        <h3 class="text-xl font-semibold text-highlighted">
           Participant details
         </h3>
         <div

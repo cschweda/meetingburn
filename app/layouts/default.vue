@@ -7,19 +7,26 @@ function scrollToTop() {
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-default">
-    <header class="border-b border-default">
-      <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+  <div class="min-h-screen flex flex-col bg-default w-full min-w-0">
+    <header class="border-b border-default shrink-0 overflow-visible">
+      <div class="container mx-auto px-4 py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <NuxtLink
           to="/"
-          class="hover:opacity-80 transition-opacity"
+          class="hover:opacity-80 transition-opacity shrink-0 overflow-visible"
           @click="scrollToTop"
         >
-          <span class="text-6xl md:text-8xl font-bold font-sans text-primary tracking-tight block">
+          <span class="text-4xl sm:text-6xl md:text-8xl font-bold font-sans text-primary tracking-tight block leading-[1.1] pb-1">
             {{ appName }}
           </span>
         </NuxtLink>
-        <nav class="flex items-center gap-4" role="navigation" aria-label="Main navigation">
+        <nav class="flex flex-wrap items-center gap-3 sm:gap-4 shrink-0" role="navigation" aria-label="Main navigation">
+          <NuxtLink
+            to="/"
+            class="text-sm font-medium text-muted hover:text-highlighted transition-colors"
+            @click="scrollToTop"
+          >
+            Home
+          </NuxtLink>
           <NuxtLink
             to="/calculate"
             class="text-sm font-medium text-muted hover:text-highlighted transition-colors"
@@ -47,7 +54,7 @@ function scrollToTop() {
         </nav>
       </div>
     </header>
-    <main class="flex-1">
+    <main class="flex-1 min-w-0 w-full overflow-x-hidden">
       <slot />
     </main>
     <footer class="border-t border-default py-6 text-center text-sm text-muted">

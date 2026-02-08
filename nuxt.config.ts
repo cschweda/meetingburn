@@ -1,4 +1,4 @@
-import { meetingburnConfig } from './meetcost.config'
+import { meetingburnConfig } from './meetingburn.config'
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
@@ -76,7 +76,7 @@ export default defineNuxtConfig({
         globInclude: ['app/**', 'node_modules/@nuxt/ui/dist/**'],
         globExclude: ['node_modules'],
       },
-      icons: ['lucide:moon', 'lucide:sun', 'lucide:minus', 'lucide:plus'],
+      icons: ['lucide:moon', 'lucide:sun', 'lucide:minus', 'lucide:plus', 'lucide:gauge'],
     },
   },
 })

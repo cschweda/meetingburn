@@ -1,6 +1,7 @@
 <template>
-  <UApp>
-    <NuxtLayout>
+  <div class="min-w-0 w-full overflow-x-hidden">
+    <UApp>
+      <NuxtLayout>
       <NuxtErrorBoundary>
         <NuxtPage />
         <template #error="{ error, clearError }">
@@ -14,5 +15,6 @@
         </template>
       </NuxtErrorBoundary>
     </NuxtLayout>
-  </UApp>
+    </UApp>
+  </div>
 </template>

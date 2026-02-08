@@ -196,7 +196,7 @@ describe('useShareReceipt - Privacy & PII Protection', () => {
       ]
       const meeting = createTestMeeting(participants, 1800, 200)
       const payload = meetingToPayload(meeting)
-      const allowedKeys = new Set(['t', 'd', 'n', 'c', 'a', 's', 'm', 'f', 'ct', 'un'])
+      const allowedKeys = new Set(['t', 'd', 'n', 'c', 'a', 's', 'm', 'f', 'ct', 'un', 'fm', 'ip'])
       const payloadKeys = Object.keys(payload) as string[]
 
       payloadKeys.forEach((key) => {

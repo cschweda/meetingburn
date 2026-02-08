@@ -4,12 +4,15 @@ import type { PresetType } from '~/types'
 import { usePresets } from '~/composables/usePresets'
 import { formatCurrency } from '~/utils/formatting'
 
+const props = defineProps<{
+  numberOfPeople: number
+}>()
+
 const emit = defineEmits<{
   select: [configs: PresetParticipantConfig[], presetType: PresetType]
 }>()
 
 const { PRESETS, createParticipantsFromPreset } = usePresets()
-const numberOfPeople = ref(3)
 const presetOrder: (Exclude<PresetType, 'custom'>)[] = [
   'agency',
   'consulting',
@@ -59,12 +62,12 @@ const selectedPreset = ref<Exclude<PresetType, 'custom'> | null>(null)
 function applyPreset(presetType: Exclude<PresetType, 'custom'>) {
   selectedPreset.value = presetType
   const preset = PRESETS[presetType]
-  const count = Math.max(2, Math.min(100, numberOfPeople.value))
+  const count = Math.max(2, Math.min(100, props.numberOfPeople))
   const configs = createParticipantsFromPreset(preset, count)
   emit('select', configs, presetType)
 }
 
-watch(numberOfPeople, () => {
+watch(() => props.numberOfPeople, () => {
   if (selectedPreset.value) {
     applyPreset(selectedPreset.value)
   }
@@ -72,7 +75,7 @@ watch(numberOfPeople, () => {
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div class="space-y-6">
     <div>
       <h3 class="text-lg font-medium text-muted mb-1">
         Quick setup with industry preset
@@ -81,20 +84,7 @@ watch(numberOfPeople, () => {
         Based on 2026 US salary trends. Select an industry preset. For 10 or fewer participants, you can optionally adjust individual salaries. These are averages and may be lower than expected for senior roles or high-cost regions.
       </p>
     </div>
-    <UFormField label="Number of people" size="lg">
-      <UInputNumber
-        v-model="numberOfPeople"
-        :min="2"
-        :max="100"
-        placeholder="3"
-        size="lg"
-        class="max-w-32"
-        aria-label="Number of participants for preset"
-        :increment="{ color: 'neutral', variant: 'solid', size: 'xs' }"
-        :decrement="{ color: 'neutral', variant: 'solid', size: 'xs' }"
-      />
-    </UFormField>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+    <div class="grid grid-cols-1 min-[400px]:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 w-full min-w-0">
       <UButton
         v-for="{ key, preset } in presetItems"
         :key="key"

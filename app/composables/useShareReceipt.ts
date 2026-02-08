@@ -13,6 +13,10 @@ export interface ShareReceiptPayload {
   f: number
   ct: number
   un: number
+  /** Format: 'r' = remote, 'i' = in-person. Omit = remote (backward compat) */
+  fm?: 'r' | 'i'
+  /** In-person cost (employee commute, etc). Omit = 0 */
+  ip?: number
 }
 
 export function useShareReceipt() {
@@ -35,6 +39,8 @@ export function useShareReceipt() {
       f: breakdown.f,
       ct: breakdown.ct,
       un: breakdown.un,
+      fm: meeting.format === 'in-person' ? 'i' : 'r',
+      ip: meeting.inPersonCost ? Math.round(meeting.inPersonCost * 100) / 100 : undefined,
     }
   }
 

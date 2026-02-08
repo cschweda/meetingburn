@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+/* Base responsive: prevent horizontal scroll, full-width content */
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
 /* Subtle page transition */
 .page-enter-active,
 .page-leave-active {

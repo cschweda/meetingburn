@@ -62,7 +62,7 @@ function handleClearHistory() {
 
 <template>
   <div class="container mx-auto px-4 py-12 max-w-2xl">
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
       <h1 class="text-2xl font-bold text-highlighted">
         Meeting History
       </h1>
@@ -102,21 +102,21 @@ function handleClearHistory() {
         >
           <button
             type="button"
-            class="w-full px-4 py-4 text-left hover:bg-muted/30 transition-colors flex items-center justify-between gap-4"
+            class="w-full px-4 py-4 text-left hover:bg-muted/30 transition-colors flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
             @click="toggleExpanded(meeting)"
           >
-            <div class="flex-1 min-w-0">
+            <div class="flex-1 min-w-0 w-full">
               <p class="font-medium text-highlighted truncate">
                 {{ sanitizedMeetingDescription(meeting) }}
               </p>
-              <p class="text-sm text-muted">
+              <p class="text-sm text-muted break-words">
                 {{ formatDate(meeting.timestamp) }} • {{ formatTime(meeting.timestamp) }}
-                <span v-if="meeting.sectorType" class="ml-2">
+                <span v-if="meeting.sectorType" class="ml-0 sm:ml-2 block sm:inline">
                   • {{ sectorLabels[meeting.sectorType] }}
                 </span>
               </p>
             </div>
-            <div class="flex items-center gap-4 shrink-0">
+            <div class="flex items-center gap-3 sm:gap-4 shrink-0 flex-shrink-0">
               <span class="text-sm text-muted">
                 {{ displayDurationForMeeting(meeting).readable }}
               </span>

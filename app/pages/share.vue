@@ -58,7 +58,7 @@ const comparisons = computed(() =>
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-default">
+  <div class="w-full min-w-0 flex-1">
     <main class="flex-1 container mx-auto px-4 py-12 max-w-2xl">
       <div v-if="error" class="text-center py-16">
         <p class="text-xl text-muted mb-4">{{ error }}</p>
@@ -69,7 +69,7 @@ const comparisons = computed(() =>
 
       <div
         v-else-if="payload"
-        class="bg-default border border-default rounded-lg p-6 shadow-sm"
+        class="bg-default border border-default rounded-lg p-4 sm:p-6 shadow-sm"
       >
         <h1 class="text-2xl font-bold text-highlighted mb-4 flex items-center gap-2">
           <UIcon name="i-lucide-receipt" class="size-7" aria-hidden="true" />
@@ -123,6 +123,7 @@ const comparisons = computed(() =>
         <p class="text-sm text-muted">
           <strong>If repeated weekly:</strong> Annual cost: {{ formatCurrency(payload.c * 52) }}
         </p>
+
         <p class="text-xs text-muted mt-6">{{ receiptFooter }}</p>
         <div class="mt-8">
           <NuxtLink to="/">

@@ -149,13 +149,13 @@ const startTimeFormatted = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center flex-1 py-8 px-4" role="region" aria-live="polite" aria-label="Meeting cost counter">
+  <div class="flex flex-col items-center justify-center flex-1 py-8 px-4 w-full min-w-0 overflow-x-hidden" role="region" aria-live="polite" aria-label="Meeting cost counter">
     <p class="text-2xl md:text-3xl font-bold text-muted mb-4">
       MEETING IN PROGRESS
     </p>
 
     <p
-      class="text-6xl md:text-9xl font-extrabold tabular-nums transition-colors duration-300"
+      class="text-3xl min-[360px]:text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-extrabold tabular-nums transition-colors duration-300 max-w-full overflow-hidden"
       :class="costThresholdClass"
       data-test="cost-display"
     >

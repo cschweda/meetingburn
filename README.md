@@ -153,7 +153,7 @@ tests/                       # Vitest unit tests (86 tests across 6 suites)
 └── utils/                   # calculations, formatting, sanitize, comparisons
 
 public/                      # Static assets (favicon, screenshots)
-meetcost.config.ts           # Single source of truth for app config (filename kept for compatibility)
+meetingburn.config.ts        # Single source of truth for app config
 ```
 
 ## Deployment
@@ -187,7 +187,7 @@ The app is a static Nuxt build. Deploy the contents of `.output/public` to any s
 
 ## Configuration
 
-App-wide settings live in `meetcost.config.ts`:
+App-wide settings live in `meetingburn.config.ts`:
 
 - Site URL, app name, tagline
 - Sector labels (public/private)

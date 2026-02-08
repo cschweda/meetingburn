@@ -1,7 +1,7 @@
 # Meeting Cost Calculator - Design Document
 
-**Project Code Name:** MeetCost  
-**Target Domain:** meetcost.app  
+**Project Code Name:** MeetingBurn  
+**Target Domain:** meetingburn.app  
 **Version:** 1.0.0  
 **Date:** February 7, 2026  
 **Author:** Chris Schweda  
@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-MeetCost is a real-time meeting cost calculator web application designed to make invisible meeting waste painfully visible. By displaying a live-ticking counter showing dollar-per-second burn rates, the app creates shareable "shock moments" that drive behavior change in corporate meeting culture. Built as a personal project separate from ICJIA branding.
+MeetingBurn is a real-time meeting cost calculator web application designed to make invisible meeting waste painfully visible. By displaying a live-ticking counter showing dollar-per-second burn rates, the app creates shareable "shock moments" that drive behavior change in corporate meeting culture. Built as a personal project separate from ICJIA branding.
 
 **Core Value Proposition:** Transform abstract meeting time into concrete financial data with viral shareability.
 
@@ -49,14 +49,14 @@ MeetCost is a real-time meeting cost calculator web application designed to make
 
 ### Deployment
 - **Netlify** (SSR mode via serverless functions)
-- **Domain:** meetcost.app
+- **Domain:** meetingburn.app
 
 ---
 
 ## Project Name & Branding
 
-### Primary Option: **MeetCost**
-- **URL:** meetcost.app
+### Primary Option: **MeetingBurn**
+- **URL:** meetingburn.app
 - **Tagline:** "Watch your meeting dollars burn"
 - **Rationale:** Direct, memorable, conveys urgency without being too jokey
 
@@ -87,7 +87,7 @@ MeetCost is a real-time meeting cost calculator web application designed to make
    - Pro: Professional sounding
    - Con: Too formal for viral appeal
 
-**Recommendation:** Proceed with **MeetCost** as primary brand.
+**Recommendation:** Proceed with **MeetingBurn** as primary brand.
 
 ---
 
@@ -165,7 +165,7 @@ yarn build
 - [ ] Calculator accurately tracks costs
 - [ ] Receipt generation works
 - [ ] Mobile responsive
-- [ ] Deployed at meetcost.app
+- [ ] Deployed at meetingburn.app
 
 **Deployment Type:** Static with client-side JavaScript (no serverless needed)
 
@@ -788,8 +788,8 @@ Receipt displays (large, readable format):
     │  [16px font, gray]                           │
     │                                              │
     ├─────────────────────────────────────────────┤
-    │  Tracked with MeetCost                       │
-    │  meetcost.app                  │
+    │  Tracked with MeetingBurn                       │
+    │  meetingburn.app                  │
     │  [14px font, very light gray]                │
     └─────────────────────────────────────────────┘
     ↓
@@ -1048,7 +1048,7 @@ interface ReceiptProps {
 - Canvas-based image generation (800×1000px, 2x resolution)
 - Multiple comparison metrics (random selection for variety)
 - QR code to receipt URL (optional)
-- Watermark: "Tracked with MeetCost"
+- Watermark: "Tracked with MeetingBurn"
 - Copy to clipboard functionality (Markdown, Plain Text)
 - Native share API integration
 - CSV export with participant detail option
@@ -1185,7 +1185,7 @@ interface HistoryEntry {
 
 ### Format Overview
 
-MeetCost supports four export formats to maximize shareability and data portability:
+MeetingBurn supports four export formats to maximize shareability and data portability:
 
 1. **Image (PNG)** - Visual, shareable receipt (800×1000px, 2x resolution)
 2. **Markdown** - Structured text with formatting for GitHub, Notion, etc.
@@ -1234,7 +1234,7 @@ Annual cost: **$309,256**
 
 ---
 
-*Tracked with [MeetCost](https://meetcost.app)*
+*Tracked with [MeetingBurn](https://meetingburn.app)*
 ```
 
 ---
@@ -1278,8 +1278,8 @@ Burn Rates:
 - Per-minute: $71.65/min
 - Per-second: $1.19/sec
 
-Tracked with MeetCost
-https://meetcost.app
+Tracked with MeetingBurn
+https://meetingburn.app
 ```
 
 ---
@@ -1422,7 +1422,7 @@ Annual cost: **${formatCurrency(meeting.totalCost * 52)}**
 
 ---
 
-*Tracked with [MeetCost](https://meetcost.app)*`
+*Tracked with [MeetingBurn](https://meetingburn.app)*`
   }
 
   const generatePlainText = (meeting: Meeting): string => {
@@ -1458,8 +1458,8 @@ Burn Rates:
 - Per-minute: ${formatCurrency(meeting.costPerMinute)}/min
 - Per-second: ${formatCurrency(meeting.costPerSecond)}/sec
 
-Tracked with MeetCost
-https://meetcost.app`
+Tracked with MeetingBurn
+https://meetingburn.app`
   }
 
   const generateCSV = (
@@ -1780,16 +1780,16 @@ export default defineNuxtConfig({
 ```vue
 <script setup lang="ts">
 useSeoMeta({
-  title: 'MeetCost - Watch Your Meeting Dollars Burn in Real-Time',
+  title: 'MeetingBurn - Watch Your Meeting Dollars Burn in Real-Time',
   description: 'A real-time meeting cost calculator that makes meeting waste visible. Track, analyze, and share the true cost of corporate meetings.',
-  ogTitle: 'MeetCost - Meeting Cost Calculator',
+  ogTitle: 'MeetingBurn - Meeting Cost Calculator',
   ogDescription: 'Stop wasting money on unproductive meetings. See the cost in real-time.',
-  ogImage: 'https://meetcost.app/og-image.png',
-  ogUrl: 'https://meetcost.app',
+  ogImage: 'https://meetingburn.app/og-image.png',
+  ogUrl: 'https://meetingburn.app',
   twitterCard: 'summary_large_image',
-  twitterTitle: 'MeetCost - Meeting Cost Calculator',
+  twitterTitle: 'MeetingBurn - Meeting Cost Calculator',
   twitterDescription: 'This meeting just cost $4,980. How much are yours?',
-  twitterImage: 'https://meetcost.app/twitter-card.png'
+  twitterImage: 'https://meetingburn.app/twitter-card.png'
 })
 </script>
 ```
@@ -1800,7 +1800,7 @@ useSeoMeta({
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "MeetCost",
+  "name": "MeetingBurn",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
   "description": "Real-time meeting cost calculator and analyzer",
@@ -1885,7 +1885,7 @@ netlify deploy --prod
 NUXT_PUBLIC_SITE_URL=http://localhost:3000
 
 # Netlify Environment Variables (set in UI)
-NUXT_PUBLIC_SITE_URL=https://meetcost.app
+NUXT_PUBLIC_SITE_URL=https://meetingburn.app
 NUXT_PUBLIC_ANALYTICS_ID=  # Optional: Plausible/Umami
 ```
 
@@ -2514,7 +2514,7 @@ mkdir -p public/icons
 # Initialize Git
 git init
 git add .
-git commit -m "Initial commit: MeetCost project scaffold"
+git commit -m "Initial commit: MeetingBurn project scaffold"
 ```
 
 ### nuxt.config.ts (Initial)
@@ -2553,7 +2553,7 @@ export default defineNuxtConfig({
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'MeetCost - Meeting Cost Calculator',
+      title: 'MeetingBurn - Meeting Cost Calculator',
       meta: [
         { name: 'description', content: 'Watch your meeting dollars burn in real-time' }
       ]
@@ -2653,7 +2653,7 @@ export default defineNuxtConfig({
 
 ## Conclusion
 
-MeetCost is positioned as a viral-ready tool that solves a real pain point (meeting waste) with immediate visual impact (real-time cost ticker) and social proof mechanisms (shareable receipts). The tech stack leverages modern, performant frameworks (Nuxt 4 + Nuxt UI v4) while maintaining accessibility and privacy-first principles.
+MeetingBurn is positioned as a viral-ready tool that solves a real pain point (meeting waste) with immediate visual impact (real-time cost ticker) and social proof mechanisms (shareable receipts). The tech stack leverages modern, performant frameworks (Nuxt 4 + Nuxt UI v4) while maintaining accessibility and privacy-first principles.
 
 **Deployment Strategy:**
 - **Phases 1-3:** Fully static deployment (no serverless, zero cost)
