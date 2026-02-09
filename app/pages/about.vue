@@ -1,5 +1,44 @@
 <script setup lang="ts">
-const { appName, aboutDescription, siteUrl } = useMeetingBurnConfig()
+import type { CurrencyCode } from '~/composables/useCurrencyConversion'
+import { formatCurrency } from '~/utils/formatting'
+import { PRESET_SOURCES } from '~/data/presetSources'
+
+const { appName, aboutDescription, siteUrl, salaryDataYear, salaryDataDate } = useMeetingBurnConfig()
+const { PRESETS } = usePresets()
+const {
+  loading: currencyLoading,
+  error: currencyError,
+  ratesDate: currencyRatesDate,
+  fetchRates,
+  formatInCurrency,
+  formatRatesDate,
+} = useCurrencyConversion()
+
+const selectedCurrency = ref<CurrencyCode>('USD')
+
+function displayAmount(usdAmount: number): string {
+  if (selectedCurrency.value === 'USD') return formatCurrency(usdAmount)
+  return formatInCurrency(usdAmount, selectedCurrency.value)
+}
+
+async function selectCurrency(code: CurrencyCode) {
+  selectedCurrency.value = code
+  if (code !== 'USD') await fetchRates()
+}
+
+const presetList = computed(() =>
+  Object.entries(PRESETS)
+    .filter(([k]) => k !== 'custom')
+    .map(([key, preset]) => ({
+      key,
+      label: preset.label,
+      amountUsd: preset.defaultEmploymentType === 'fulltime'
+        ? (preset.averageSalary ?? 0)
+        : preset.averageRate,
+      unit: preset.defaultEmploymentType === 'fulltime' ? '/yr' : '/hr',
+      sources: PRESET_SOURCES[key as keyof typeof PRESET_SOURCES] ?? [],
+    }))
+)
 useSeoMeta({
   title: `About ${appName}`,
   description: aboutDescription,
@@ -59,6 +98,69 @@ const exampleScores = computed(() =>
       </h2>
       <p class="text-muted leading-relaxed mb-4">
         MeetingBurn converts each participant's compensation into an hourly rate, sums those rates, and multiplies by meeting duration. All math runs in your browser—no data is sent anywhere.
+      </p>
+
+      <h3 id="salary-sources" class="text-lg font-medium text-highlighted mt-6 mb-2">
+        Industry presets: average salary and verifiable sources
+      </h3>
+      <p class="text-muted leading-relaxed mb-4">
+        Preset salaries are based on documented {{ salaryDataYear }} US market data—not random guesses. <strong>Salary data is accurate as of {{ salaryDataDate }}.</strong> Below is every industry preset with its average salary and verifiable source links.
+      </p>
+
+      <div class="mb-4 p-4 rounded-lg border border-default bg-muted/20">
+        <p class="text-sm font-medium text-highlighted mb-2 flex items-center gap-2">
+          <UIcon name="i-lucide-banknote" class="size-4" aria-hidden="true" />
+          Currency (default: USD)
+        </p>
+        <p class="text-xs text-muted mb-3">
+          Convert salary amounts. Default is US Dollars (USD). Rates are accurate as of the date shown when converted.
+        </p>
+        <div class="flex flex-wrap gap-2 mb-2">
+          <UButton
+            v-for="code in ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'AUD', 'JPY']"
+            :key="code"
+            :color="selectedCurrency === code ? 'primary' : 'neutral'"
+            :variant="selectedCurrency === code ? 'solid' : 'outline'"
+            size="sm"
+            :disabled="currencyLoading && code !== 'USD'"
+            @click="selectCurrency(code as CurrencyCode)"
+          >
+            {{ code }}{{ code === 'USD' ? ' (default)' : '' }}
+          </UButton>
+        </div>
+        <p v-if="currencyError" class="text-xs text-error">
+          Conversion unavailable. Showing USD.
+        </p>
+        <p v-else-if="selectedCurrency !== 'USD' && currencyRatesDate" class="text-xs text-muted">
+          Rates as of {{ formatRatesDate(currencyRatesDate) }} via <a href="https://www.frankfurter.app/" target="_blank" rel="noopener noreferrer" class="underline hover:text-primary">Frankfurter</a>
+        </p>
+      </div>
+
+      <div class="space-y-3 mb-6">
+        <div
+          v-for="p in presetList"
+          :key="p.key"
+          class="p-3 rounded-lg bg-muted/20 border border-default"
+        >
+          <p class="font-semibold text-highlighted mb-1">{{ p.label }} — {{ displayAmount(p.amountUsd) }}{{ p.unit }}</p>
+          <p class="text-muted text-xs flex flex-wrap gap-x-1 gap-y-0.5 items-baseline">
+            <template v-for="(src, i) in p.sources" :key="src.name">
+              <template v-if="i > 0">·</template>
+              <a
+                v-if="src.url"
+                :href="src.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="underline hover:text-primary"
+              >{{ src.name }}</a>
+              <span v-else class="text-muted">{{ src.name }}</span>
+            </template>
+          </p>
+        </div>
+      </div>
+
+      <p class="text-muted leading-relaxed text-sm italic">
+        These are average estimates and may be lower than expected for senior roles or high-cost regions. Actual salaries vary by location, experience, company size, and role. You can customize any value in the calculator.
       </p>
 
       <h3 class="text-lg font-medium text-highlighted mt-6 mb-2">
@@ -311,8 +413,9 @@ const exampleScores = computed(() =>
         Examples
       </h2>
       <p class="text-muted leading-relaxed text-sm mb-6 italic">
-        All salary and hourly rates in these examples are from
-        <a href="https://www.bls.gov/oes/" target="_blank" rel="noopener noreferrer" class="underline hover:text-primary">BLS</a> average salaries for 2026,
+        All salary and hourly rates in these examples are from our documented
+        <NuxtLink to="/about#salary-sources" class="underline hover:text-primary">preset salary sources</NuxtLink>
+        ({{ salaryDataYear }}): <a href="https://www.bls.gov/oes/" target="_blank" rel="noopener noreferrer" class="underline hover:text-primary">BLS</a>,
         <a href="https://www.payscale.com/research-and-insights/us-compensation-trends" target="_blank" rel="noopener noreferrer" class="underline hover:text-primary">PayScale</a>,
         <a href="https://www.roberthalf.com/us/en/insights/salary-guide" target="_blank" rel="noopener noreferrer" class="underline hover:text-primary">Robert Half</a>, and
         <a href="https://motionrecruitment.com/it-salary" target="_blank" rel="noopener noreferrer" class="underline hover:text-primary">Motion Recruitment</a>.

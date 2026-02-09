@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Meeting } from '~/types'
+import type { CurrencyCode } from '~/composables/useCurrencyConversion'
 import { formatCurrency, formatDate, formatDuration, formatTime } from '~/utils/formatting'
 import { generateComparisonList } from '~/utils/comparisons'
 import { useReceipt } from '~/composables/useReceipt'
@@ -8,10 +9,31 @@ import { useMeetingHistory } from '~/composables/useMeetingHistory'
 import { useShareReceipt } from '~/composables/useShareReceipt'
 import { usePresets } from '~/composables/usePresets'
 import { useMeetingScore } from '~/composables/useMeetingScore'
+import { useCurrencyConversion } from '~/composables/useCurrencyConversion'
 import { sanitizeString } from '~/utils/sanitize'
 
 const { PRESETS } = usePresets()
 const { computeMeetingScore } = useMeetingScore()
+const {
+  loading: currencyLoading,
+  error: currencyError,
+  ratesDate: currencyRatesDate,
+  fetchRates,
+  formatInCurrency,
+  formatRatesDate,
+} = useCurrencyConversion()
+
+const selectedCurrency = ref<CurrencyCode>('USD')
+
+function displayAmount(usdAmount: number): string {
+  if (selectedCurrency.value === 'USD') return formatCurrency(usdAmount)
+  return formatInCurrency(usdAmount, selectedCurrency.value)
+}
+
+async function selectCurrency(code: CurrencyCode) {
+  selectedCurrency.value = code
+  if (code !== 'USD') await fetchRates()
+}
 
 const props = defineProps<{
   meeting: Meeting
@@ -368,7 +390,7 @@ async function copyShareLink() {
         <div>
           <p class="text-sm font-medium text-muted">AVERAGE RATE</p>
           <p class="text-lg">
-            {{ formatCurrency(meeting.averageRate) }}/hour
+            {{ displayAmount(meeting.averageRate) }}/hour
           </p>
           <p class="text-xs text-muted mt-1">
             Sum of each participant's hourly rate ÷ number of participants. Full-time: salary ÷ 2,080 hrs/yr (40 hrs/week × 52 weeks). Contractor: hourly rate.
@@ -379,16 +401,45 @@ async function copyShareLink() {
       <div class="border-t border-default pt-6 mb-6">
         <p class="text-sm font-medium text-muted mb-1">TOTAL COST</p>
         <p class="text-4xl font-bold text-error">
-          {{ formatCurrency(displayTotalCost) }}
+          {{ displayAmount(displayTotalCost) }}
+        </p>
+        <p v-if="currencyError" class="text-xs text-error mt-1">
+          Conversion unavailable. Showing USD.
+        </p>
+        <p v-else-if="selectedCurrency !== 'USD'" class="text-xs text-muted mt-1">
+          Rates as of {{ currencyRatesDate ? formatRatesDate(currencyRatesDate) : '—' }} via <a href="https://www.frankfurter.app/" target="_blank" rel="noopener noreferrer" class="underline hover:text-primary">Frankfurter</a> (updated daily)
         </p>
         <div v-if="displayInPersonCost > 0" class="mt-2 text-sm space-y-1">
-          <p class="text-muted"><strong class="text-foreground">Company pays:</strong> {{ formatCurrency(baseMeetingCost) }} (meeting time)</p>
-          <p class="text-muted"><strong class="text-foreground">Each employee pays (avg):</strong> {{ formatCurrency(inPersonCostPerPerson) }} (commute, coffee, parking, etc.—not exact; costs vary per person)</p>
-          <p class="text-muted"><strong class="text-foreground">All employees together pay:</strong> {{ formatCurrency(displayInPersonCost) }}</p>
+          <p class="text-muted"><strong class="text-foreground">Company pays:</strong> {{ displayAmount(baseMeetingCost) }} (meeting time)</p>
+          <p class="text-muted"><strong class="text-foreground">Each employee pays (avg):</strong> {{ displayAmount(inPersonCostPerPerson) }} (commute, coffee, parking, etc.—not exact; costs vary per person)</p>
+          <p class="text-muted"><strong class="text-foreground">All employees together pay:</strong> {{ displayAmount(displayInPersonCost) }}</p>
         </div>
         <p v-else class="text-xs text-muted mt-1">
           (Sum of hourly rates × duration in seconds) ÷ 3,600 sec/hr
         </p>
+
+        <div class="mt-4 p-4 rounded-lg border border-default bg-muted/20">
+          <p class="text-sm font-medium text-highlighted mb-2 flex items-center gap-2">
+            <UIcon name="i-lucide-banknote" class="size-4" aria-hidden="true" />
+            Currency (default: USD)
+          </p>
+          <p class="text-xs text-muted mb-3">
+            Convert amounts to another currency. Default is US Dollars (USD). Rates are accurate as of the date shown when converted.
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <UButton
+              v-for="code in ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'AUD', 'JPY']"
+              :key="code"
+              :color="selectedCurrency === code ? 'primary' : 'neutral'"
+              :variant="selectedCurrency === code ? 'solid' : 'outline'"
+              size="sm"
+              :disabled="currencyLoading && code !== 'USD'"
+              @click="selectCurrency(code as CurrencyCode)"
+            >
+              {{ code }}{{ code === 'USD' ? ' (default)' : '' }}
+            </UButton>
+          </div>
+        </div>
       </div>
 
       <div v-if="showComparison && comparisons.length" class="mb-6 p-4 bg-muted/30 rounded-lg">
@@ -399,10 +450,10 @@ async function copyShareLink() {
       </div>
 
       <div class="mb-6 text-sm text-muted">
-        <p><strong>If repeated weekly:</strong> Annual cost: {{ formatCurrency(displayTotalCost * 52) }}</p>
+        <p><strong>If repeated weekly:</strong> Annual cost: {{ displayAmount(displayTotalCost * 52) }}</p>
         <p class="mt-1">
-          Per-minute: {{ formatCurrency(meeting.costPerMinute) }}/min •
-          Per-second: {{ formatCurrency(meeting.costPerSecond) }}/sec
+          Per-minute: {{ displayAmount(meeting.costPerMinute) }}/min •
+          Per-second: {{ displayAmount(meeting.costPerSecond) }}/sec
         </p>
       </div>
 

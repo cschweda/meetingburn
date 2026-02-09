@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { tagline, defaultDescription, appName, siteUrl } = useMeetingBurnConfig()
+const { tagline, defaultDescription, appName, siteUrl, salaryDataYear, salarySources } = useMeetingBurnConfig()
 useSeoMeta({
   title: tagline,
   description: defaultDescription,
@@ -68,6 +68,21 @@ useSeoMeta({
         <p class="text-sm md:text-base text-muted">
           {{ appName }} is 100% free and will always be free. No accounts, no sign-ups.
         </p>
+      </div>
+
+      <div class="mt-6 p-6 rounded-xl bg-muted/30 border border-default max-w-2xl mx-auto">
+        <p class="text-base md:text-lg font-medium text-highlighted mb-2">
+          Not random guesses—documented salary data
+        </p>
+        <p class="text-sm md:text-base text-muted mb-3">
+          Average costs use {{ salaryDataYear }} US market data from trusted sources:
+          <span v-for="(src, i) in salarySources" :key="src.name" class="inline">
+            <a :href="src.url" target="_blank" rel="noopener noreferrer" class="underline hover:text-primary">{{ src.name }}</a><template v-if="i < salarySources.length - 1">, </template>
+          </span>.
+        </p>
+        <NuxtLink to="/about#salary-sources" class="text-sm font-medium text-primary hover:underline">
+          See how average salary costs are calculated →
+        </NuxtLink>
       </div>
     </div>
 

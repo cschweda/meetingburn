@@ -13,6 +13,17 @@ export function formatHourlyRate(value: number): string {
   return `${formatCurrency(value)}/hr`
 }
 
+/** Format a number as currency with a specific ISO 4217 code (e.g. EUR, GBP). */
+export function formatCurrencyByCode(value: number, currencyCode: string): string {
+  const locale = currencyCode === 'USD' ? 'en-US' : currencyCode === 'GBP' ? 'en-GB' : 'de-DE'
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currencyCode,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
+}
+
 export function formatDuration(seconds: number): DurationFormat {
   const totalSecs = Math.floor(seconds)
   const hours = Math.floor(totalSecs / 3600)

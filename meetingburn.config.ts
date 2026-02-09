@@ -32,6 +32,17 @@ export const meetingburnConfig = {
     'Other',
   ] as const,
   defaultMeetingType: 'General',
+  /** Year of salary data used for industry presets. Update annually (e.g. 2027). */
+  salaryDataYear: 2026,
+  /** Date salary data was last verified. Update when refreshing preset sources. */
+  salaryDataDate: 'February 9, 2026',
+  /** Primary documented sources for preset average salaries. Used for transparency. */
+  salarySources: [
+    { name: 'BLS Occupational Employment Statistics', url: 'https://www.bls.gov/oes/' },
+    { name: 'PayScale US Compensation Trends', url: 'https://www.payscale.com/research-and-insights/us-compensation-trends' },
+    { name: 'Robert Half Salary Guide', url: 'https://www.roberthalf.com/us/en/insights/salary-guide' },
+    { name: 'Motion Recruitment IT Salary', url: 'https://motionrecruitment.com/it-salary' },
+  ] as const,
 } as const
 
 export type MeetingBurnConfig = typeof meetingburnConfig
