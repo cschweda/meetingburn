@@ -17,7 +17,7 @@
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
     # X-XSS-Protection removed: deprecated; CSP is primary XSS defense
     # Enforcing CSP; script-src includes 'unsafe-inline' for Nuxt/Vue hydration compatibility
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.frankfurter.dev; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
 
 # Share page: no-referrer so r= param is never sent as referrer on outbound requests
 [[headers]]
